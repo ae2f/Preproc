@@ -1,4 +1,4 @@
-# ae2f::Inc
+# ae2f::Preproc
 - Processes simple include preprocessor written in C.
 
 ## TODO
