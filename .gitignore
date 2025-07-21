@@ -1,5 +1,7 @@
-.vs/*
+*/.*/*
+.*/*
 out/*
 CMakeFiles/*
 build/*
+*/build/*
 .vscode/*
