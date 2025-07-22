@@ -1,0 +1,64 @@
+name: ae2f-workflow
+on:
+  push:
+    branches: [main]
+  
+jobs:
+  test-compiler-majours:
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest, ubuntu-24.04-arm, windows-11-arm]
+        c:  [-DCMAKE_C_COMPILER=gcc, -DCMAKE_C_COMPILER=clang, \"\"]
+        conf: [Release, Debug]
+
+        include:
+          - os: ubuntu-latest
+            bash: bash
+
+          - os: windows-latest
+            bash: bash
+
+          - os: macos-latest
+            bash: bash
+            
+          - os: ubuntu-24.04-arm
+            bash: bash
+
+          - os: windows-11-arm
+            bash: bash
+
+          - c: -DCMAKE_C_COMPILER=gcc
+            cc: -DCMAKE_CXX_COMPILER=g++
+            
+          - c: -DCMAKE_C_COMPILER=clang
+            cc: -DCMAKE_CXX_COMPILER=clang++
+            
+          - c: \"\"
+            cc: \"\"
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: 'main'
+        fetch-depth: '1'
+
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+      
+    - name: setupninja-win-11-arm
+      if: matrix.os == 'windows-11-arm'
+      uses: ashutoshvarma/setup-ninja@master
+
+    - name: setupclang-win-11-arm
+      if: matrix.os == 'windows-11-arm'
+      uses: egor-tensin/setup-clang@v1
+      
+    - name: Test
+      run: ${{ matrix.bash }} ./test.sh ${{ matrix.c }} ${{ matrix.cc }} ${{ matrix.conf }}
+        
+  
