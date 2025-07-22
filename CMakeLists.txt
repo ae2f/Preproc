@@ -11,9 +11,11 @@ include(cmake/Core.cmake)
 include(cmake/Macro.cmake)
 include(cmake/Inc.cmake)
 
-if(NOT TARGET ae2f::Macro)
+if(NOT TARGET ae2f::Preproc)
 	configure_file(${PROJECT_SOURCE_DIR}/Macro.h.in ${PROJECT_SOURCE_DIR}/inc/ae2f/Macro.h)
-	ae2f_CoreLibTentConfigCustom(Macro INTERFACE inc ae2f "inc/ae2f/Macro.h" config/Macro.cmake.in)
+	ae2f_CoreLibTentConfigCustom(Preproc INTERFACE inc ae2f config/Macro.cmake.in
+		"inc/ae2f/Macro.h" 
+	)
 endif()
 
 if(${ae2f_TEST})
