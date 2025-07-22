@@ -1,12 +1,4 @@
-#define ON		1
-#define OFF		0
-
-#define DIRLEN			150
-#define PATHLEN			150
-#define STACKLEN		40
-#define	INC_IGNORE_NFOUND	ON
-#define INC_IGNORE_SMASH	ON
-#define INC_REPT_CHECK		ON
+#include "./main.auto.h"
 
 #if defined(NDEBUG) && NDEBUG
 #define DEBUG	0

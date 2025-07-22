@@ -5,3 +5,4 @@ CMakeFiles/*
 build/*
 */build/*
 .vscode/*
+*.auto.h

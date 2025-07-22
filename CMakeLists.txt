@@ -9,8 +9,14 @@ option(ae2f_TEST "" ON)
 
 include(cmake/Core.cmake)
 include(cmake/Macro.cmake)
+include(cmake/Inc.cmake)
 
 if(NOT TARGET ae2f::Macro)
 	configure_file(${PROJECT_SOURCE_DIR}/Macro.h.in ${PROJECT_SOURCE_DIR}/inc/ae2f/Macro.h)
 	ae2f_CoreLibTentConfigCustom(Macro INTERFACE inc ae2f "inc/ae2f/Macro.h" config/Macro.cmake.in)
+endif()
+
+if(${ae2f_TEST})
+	ae2f_Macro_init(1, 100, 100)
+	ae2f_Inc_init(50, 50, 50, ON, ON, ON)
 endif()

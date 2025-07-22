@@ -151,7 +151,3 @@ function(ae2f_Macro_autoname prm_in)
 
 	ae2f_Macro_one(${prm_in}  "${dir}/${path_no_ext}.auto${ext}")
 endfunction()
-
-if(${ae2f_TEST})
-	ae2f_Macro_init(1, 100, 100)
-endif()

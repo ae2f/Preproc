@@ -1,6 +1,6 @@
-function(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
-	file(REMOVE_RECURSE ${ae2f_Macro_ROOT}/build)
-  	message("[ae2f_Macro_init]  ${CMAKE_GENERATOR}")
+function(ae2f_Inc_init prm_DIRLEN prm_PATHLEN prm_STACKLEN prm_INC_IGNORE_STACKSMASH prm_INC_IGNORE_NFOUND prm_INC_REPT_CHECK)
+	file(REMOVE_RECURSE ${ae2f_Inc_ROOT}/build)
+	message("[ae2f_Inc_init]  ${CMAKE_GENERATOR}")
 
 	if(DEFINED CMAKE_C_STANDARD)
 		set(cstd "-DCMAKE_C_STANDARD=${CMAKE_C_STANDARD}")
@@ -21,20 +21,22 @@ function(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
 	endif()
 
 	execute_process(
-		WORKING_DIRECTORY ${ae2f_Macro_ROOT}
+		WORKING_DIRECTORY ${ae2f_Inc_ROOT}
 		COMMAND ${CMAKE_COMMAND} 
 		"-S" "." "-B" "./build"
-		-Dae2f_Macro_CMT_REQUIRED=${prm_CMT_REQUIRED}
-		-Dae2f_Macro_SZPARAM=${prm_SZPARAM}
-		-Dae2f_Macro_SZTPARAM=${prm_SZTPARAM}
-        	-Dae2f_MAC_KEYWORD=${ae2f_MAC_KEYWORD}
 		${gen} ${cstd} ${cc}
+		-DDIRLEN=${prm_DIRLEN}
+		-DPATHLEN=${prm_PATHLEN}
+		-DSTACKLEN=${prm_STACKLEN}
+		-DINC_IGNORE_SMASH=${prm_INC_IGNORE_STACKSMASH}
+		-DINC_IGNORE_NFOUND=${prm_INC_IGNORE_NFOUND}
+		-DINC_REPT_CHECK=${prm_INC_REPT_CHECK}
 		${ARGN}
   		RESULT_VARIABLE ConfOut
 	)
 
  	if(NOT ConfOut EQUAL 0)
-		message(FATAL_ERROR "[ae2f_Macro_init] Configuration failed. ${ConfOut}")
+		message(FATAL_ERROR "[ae2f_Inc_init] Configuration failed. ${ConfOut}")
 	endif()
 
 	execute_process(
@@ -44,8 +46,20 @@ function(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
 		)
   
  	if(NOT BuildOut EQUAL 0)
-		message(FATAL_ERROR "[ae2f_Macro_init] Build failed. ${BuildOut}")
+		message(FATAL_ERROR "[ae2f_Inc_init] Build failed. ${BuildOut}")
 	endif()
 
- 	message("[ae2f_Macro_init] Succeed.")
+	message("[ae2f_Inc_init] Succeed.")
+endfunction()
+
+function(ae2f_Inc_Run_One inp_file_absolute out_file_absolute)
+	file(GLOB_RECURSE cmd ${ae2f_Macro_ROOT}/build/bin/**)
+	get_filename_component(dir "${inp_file_absolute}" DIRECTORY)
+
+	execute_process(
+		WORKING_DIRECTORY 
+		COMMAND		${cmd} ${dir} ${ARGN}
+		INPUT_FILE	${inp_file_absolute}
+		OUTPUT_FILE	${out_file_absolute}
+	)
 endfunction()
