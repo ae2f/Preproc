@@ -118,7 +118,7 @@ function(ae2f_Macro_Lib_V prm_namespace prm_name prm_prefix
 		ae2f_CoreLibTentConfigCustom(
 			${prm_name} ${prm_prefix} ${prm_include_dir} 
 			${prm_namespace} ${prm_config_file}
-			${ARGN} ${files-src} ${ofiles-inc} ${files-inc}
+			${ARGN} ${files-src} ${ofiles-inc}
 		)
 	else()
 		ae2f_CoreLibTentConfigCustom(
