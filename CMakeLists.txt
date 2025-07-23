@@ -13,6 +13,7 @@ include(cmake/Macro.cmake)
 include(cmake/Inc.cmake)
 include(cmake/FileRaw.cmake)
 
+
 if(NOT TARGET ae2f::Preproc)
 	configure_file(${PROJECT_SOURCE_DIR}/Macro.h.in ${PROJECT_SOURCE_DIR}/inc/ae2f/Macro.h)
 	ae2f_CoreLibTentConfigCustom(

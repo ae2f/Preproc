@@ -239,7 +239,7 @@ STACK_SUB:
 		goto KEYGET;
 	}
 #else
-	return -STATE_FOPEN_BAD;
+	{ return -STATE_FOPEN_BAD; }
 #endif
 
 	for(i = strlen(STACK_NXT.m_current); i--;) {
