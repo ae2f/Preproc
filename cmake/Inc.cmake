@@ -40,7 +40,7 @@ function(ae2f_Inc_init prm_DIRLEN prm_PATHLEN prm_STACKLEN prm_INC_IGNORE_STACKS
 	endif()
 
 	execute_process(
-		WORKING_DIRECTORY ${ae2f_Macro_ROOT}
+		WORKING_DIRECTORY ${ae2f_Inc_ROOT}
 		COMMAND ${CMAKE_COMMAND} "--build" "build"
   		RESULT_VARIABLE BuildOut
 		)
