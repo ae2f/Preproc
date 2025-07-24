@@ -40,9 +40,9 @@ jobs:
             cc: \"\"
 
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: 'main'
+    - uses: actions/checkout@v4
+      with:
+        ref: 'main'
         fetch-depth: '1'
 
     - name: Set reusable strings
