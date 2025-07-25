@@ -9,11 +9,24 @@ set(ae2f_packcount 0 CACHE STRING "Pack count for pre-defined structures.")
 set(ae2f_ProjRoot ${CMAKE_CURRENT_SOURCE_DIR} CACHE STRING "Current Source Root")
 set(ae2f_BinRoot ${CMAKE_CURRENT_BINARY_DIR} CACHE STRING "Current Binary Root")
 set(ae2f_submod  submod CACHE STRING submod)
+set(ae2f_submod  submod CACHE STRING submod)
+
+if(CMAKE_C_STANDARD) 
+	set(ae2f_LangVer_C ${CMAKE_C_STANDARD} CACHE STRING ${CMAKE_C_STANDARD})
+else()
+	set(ae2f_LangVer_C 90 CACHE STRING 90)
+endif()
+
+if(CMAKE_CXX_STANDARD)
+	set(ae2f_LangVer_CC ${CMAKE_CXX_STANDARD} CACHE STRING ${CMAKE_CXX_STANDARD})
+else()
+	set(ae2f_LangVer_CC 11 CACHE STRING 11)
+endif()
 
 if(ae2f_IS_SHARED)
-	set(ae2f_LIBPREFIX SHARED CACHE STRING "SHARED")
+    set(ae2f_LIBPREFIX SHARED CACHE STRING "SHARED")
 else()
-	set(ae2f_LIBPREFIX STATIC CACHE STRING "STATIC")
+    set(ae2f_LIBPREFIX STATIC CACHE STRING "STATIC")
 endif()
 
 # @namespace ___DOC_CMAKE
@@ -36,24 +49,24 @@ endif()
 # 
 # @see ___DOC_CMAKE::ae2f_TEST
 function(ae2f_CoreTestTent prm_LibName prm_TestSourcesDir)
-	if(ae2f_TEST)
-		if(ae2f_CXX)
-			file(GLOB_RECURSE files "${prm_TestSourcesDir}/*")
-		else()
-			file(GLOB_RECURSE files "${prm_TestSourcesDir}/*.c")
-		endif()
-		list(LENGTH files list_length)
+    if(ae2f_TEST)
+        if(ae2f_CXX)
+            file(GLOB_RECURSE files "${prm_TestSourcesDir}/*")
+        else()
+            file(GLOB_RECURSE files "${prm_TestSourcesDir}/*.c")
+        endif()
+        list(LENGTH files list_length)
+        
+        math(EXPR adjusted_length "${list_length} - 1")
 
-		math(EXPR adjusted_length "${list_length} - 1")
-
-		foreach(i RANGE 0 ${adjusted_length})
-			list(GET files ${i} item)
-			get_filename_component(__NAME ${item} NAME)
-			add_executable("${prm_LibName}-Test-${__NAME}" ${item})
-			target_link_libraries("${prm_LibName}-Test-${__NAME}" ${ARGN} ${prm_LibName})
-			add_test(NAME "${prm_LibName}-Test-${__NAME}" COMMAND "${prm_LibName}-Test-${__NAME}")
-		endforeach()
-	endif()
+        foreach(i RANGE 0 ${adjusted_length})
+            list(GET files ${i} item)
+            get_filename_component(__NAME ${item} NAME)
+            add_executable("${prm_LibName}-Test-${__NAME}" ${item})
+            target_link_libraries("${prm_LibName}-Test-${__NAME}" ${ARGN} ${prm_LibName})
+            add_test(NAME "${prm_LibName}-Test-${__NAME}" COMMAND "${prm_LibName}-Test-${__NAME}")
+        endforeach()
+    endif()
 endfunction()
 
 # @brief
@@ -78,54 +91,54 @@ endfunction()
 # @param ...
 # The sources for the project.
 function(ae2f_CoreLibTentConfigCustom prm_TarName prm_TarPreFix prm_includeDir prm_namespace prm_configpath)
-	# Namespace Package
-	include(GNUInstallDirs)
+    # Namespace Package
+    include(GNUInstallDirs)
 
-	include_directories(${prm_includeDir})
-	add_library(${prm_namespace}-${prm_TarName} ${prm_TarPreFix} ${ARGN})
-	add_library(${prm_namespace}::${prm_TarName} ALIAS ${prm_namespace}-${prm_TarName})
+    include_directories(${prm_includeDir})
+    add_library(${prm_namespace}-${prm_TarName} ${prm_TarPreFix} ${ARGN})
+    add_library(${prm_namespace}::${prm_TarName} ALIAS ${prm_namespace}-${prm_TarName})
 
-	if(${ae2f_nakedalais})
-		add_library(${prm_TarName} ALIAS ${prm_namespace}-${prm_TarName})
-	endif()
+    if(${ae2f_nakedalais})
+        add_library(${prm_TarName} ALIAS ${prm_namespace}-${prm_TarName})
+    endif()
 
-	target_include_directories(
-		${prm_namespace}-${prm_TarName} INTERFACE
-		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${prm_includeDir}/>  
-		$<INSTALL_INTERFACE:${prm_includeDir}/${prm_namespace}/>
-	)
+    target_include_directories(
+        ${prm_namespace}-${prm_TarName} INTERFACE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${prm_includeDir}/>  
+        $<INSTALL_INTERFACE:${prm_includeDir}/${prm_namespace}/>
+    )
 
-	# Install Settings
-	install(TARGETS ${prm_namespace}-${prm_TarName}
-		EXPORT ${prm_namespace}-${prm_TarName}Targets
-		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-		INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+    # Install Settings
+    install(TARGETS ${prm_namespace}-${prm_TarName}
+        EXPORT ${prm_namespace}-${prm_TarName}Targets
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+        
+    install(DIRECTORY ${prm_includeDir}/${prm_namespace}
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${prm_namespace}
+    )
 
-	install(DIRECTORY ${prm_includeDir}/${prm_namespace}
-		DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${prm_namespace}
-	)
+    # Package
+    install(EXPORT ${prm_namespace}-${prm_TarName}Targets
+        FILE ${prm_namespace}-${prm_TarName}Targets.cmake
+        NAMESPACE ae2f::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/
+    )
+        
+    # Pack Conf
+    include(CMakePackageConfigHelpers)
+    configure_package_config_file(
+        ${prm_configpath}
+        ${CMAKE_CURRENT_BINARY_DIR}/${prm_namespace}-${prm_TarName}Config.cmake
+        INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/
+    )
+        
+    install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/${prm_namespace}-${prm_TarName}Config.cmake
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake
+    )
 
-	# Package
-	install(EXPORT ${prm_namespace}-${prm_TarName}Targets
-		FILE ${prm_namespace}-${prm_TarName}Targets.cmake
-		NAMESPACE ae2f::
-		DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/
-	)
-
-	# Pack Conf
-	include(CMakePackageConfigHelpers)
-	configure_package_config_file(
-		${prm_configpath}
-		${CMAKE_CURRENT_BINARY_DIR}/${prm_namespace}-${prm_TarName}Config.cmake
-		INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/
-	)
-
-	install(FILES
-		${CMAKE_CURRENT_BINARY_DIR}/${prm_namespace}-${prm_TarName}Config.cmake
-		DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake
-	)
-
-	set(${prm_namespace}__${prm_TarName}__TENT ${prm_namespace}-${prm_TarName} CACHE STRING ${prm_namespace}-${prm_TarName})
+    set(${prm_namespace}__${prm_TarName}__TENT ${prm_namespace}-${prm_TarName} CACHE STRING ${prm_namespace}-${prm_TarName})
 endfunction()
 
 # @brief
@@ -146,14 +159,14 @@ endfunction()
 # @param ...
 # The sources for the project.
 function(ae2f_CoreLibTent prm_TarName prm_TarPreFix prm_includeDir prm_namespace)
-	ae2f_CoreLibTentConfigCustom(
-		${prm_TarName} 
-		${prm_TarPreFix} 
-		${prm_includeDir} 
-		${prm_namespace} 
-		${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
-		${ARGN}
-	)
+    ae2f_CoreLibTentConfigCustom(
+        ${prm_TarName} 
+        ${prm_TarPreFix} 
+        ${prm_includeDir} 
+        ${prm_namespace} 
+        ${CMAKE_CURRENT_SOURCE_DIR}/Config.cmake.in
+        ${ARGN}
+    )
 endfunction()
 
 # @brief
@@ -175,43 +188,43 @@ endfunction()
 # @see ___DOC_CMAKE::ae2f_CoreLibTent
 # @see ___DOC_CMAKE::ae2f_DOC
 function(ae2f_CoreUtilityDocTent prm_TarName prm_includeDir prm_namespace)
-	if(ae2f_DOC)
-		file(GLOB_RECURSE src ${prm_includeDir} "*.cmake.hpp")
-		ae2f_CoreLibTent(${prm_TarName}-CMakeDoc INTERFACE ${prm_includeDir} ${prm_namespace}doc ${src})
-		foreach(lib ${ARGN})
-			target_link_libraries(${prm_TarName}-CMakeDoc INTERFACE ${lib}-CMakeDoc)
-		endforeach()
-	endif()
+    if(ae2f_DOC)
+        file(GLOB_RECURSE src ${prm_includeDir} "*.cmake.hpp")
+        ae2f_CoreLibTent(${prm_TarName}-CMakeDoc INTERFACE ${prm_includeDir} ${prm_namespace}doc ${src})
+        foreach(lib ${ARGN})
+            target_link_libraries(${prm_TarName}-CMakeDoc INTERFACE ${lib}-CMakeDoc)
+        endforeach()
+    endif()
 endfunction()
 
 # Domain name customization.
 function(ae2f_CoreLibFetch_DNS prm_AuthorName prm_namespace prm_TarName prm_TagName prm_Domain)
-	if(NOT TARGET ${prm_TarName})
-		if(NOT EXISTS ${ae2f_ProjRoot}/${ae2f_submod}/${prm_AuthorName}/${prm_TarName}/CMakeLists.txt)
-			execute_process(
-				COMMAND 
-				git clone 
-				https://${prm_Domain}/${prm_AuthorName}/${prm_TarName} 
-				${ae2f_ProjRoot}/${ae2f_submod}/${prm_AuthorName}/${prm_TarName}
-				--branch ${prm_TagName} ${ARGN}
-				RESULT_VARIABLE result
-			)
+    if(NOT TARGET ${prm_namespace}::${prm_TarName})
+        if(NOT EXISTS ${ae2f_ProjRoot}/${ae2f_submod}/${prm_AuthorName}/${prm_TarName}/CMakeLists.txt)
+            execute_process(
+                COMMAND 
+                git clone 
+		https://${prm_Domain}/${prm_AuthorName}/${prm_TarName} 
+                ${ae2f_ProjRoot}/${ae2f_submod}/${prm_AuthorName}/${prm_TarName}
+		--branch ${prm_TagName} ${ARGN}
+                RESULT_VARIABLE result
+            )
 
-			if(result)
-				message(FATAL_ERROR "Fetching ${prm_AuthorName}/${prm_TarName} from Github Failed.")
-			endif()
-		endif()
+            if(result)
+                message(FATAL_ERROR "Fetching ${prm_AuthorName}/${prm_TarName} from Github Failed.")
+            endif()
+        endif()
 
-		add_subdirectory(
-			${ae2f_ProjRoot}/${ae2f_submod}/${prm_AuthorName}/${prm_TarName}
-			${ae2f_BinRoot}/${ae2f_submod}/${prm_AuthorName}/${prm_TarName}
-		)
-	endif()
+        add_subdirectory(
+            ${ae2f_ProjRoot}/${ae2f_submod}/${prm_AuthorName}/${prm_TarName}
+            ${ae2f_BinRoot}/${ae2f_submod}/${prm_AuthorName}/${prm_TarName}
+        )
+    endif()
 
-	set(
-		${prm_AuthorName}__${prm_namespace}__${prm_TarName}__FETCHED 
-		${prm_namespace}::${prm_TarName} CACHE STRING ${prm_namespace}::${prm_TarName}
-	)
+    set(
+	    ${prm_AuthorName}__${prm_namespace}__${prm_TarName}__FETCHED 
+	    ${prm_namespace}::${prm_TarName} CACHE STRING ${prm_namespace}::${prm_TarName}
+    )
 
 endfunction()
 
