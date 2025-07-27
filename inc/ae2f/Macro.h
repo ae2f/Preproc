@@ -39,4 +39,6 @@
 #define ON 	1
 #endif
 
+#ifndef ae2f_MAC_BUILD
 #define ae2f_MAC_BUILD ON
+#endif
