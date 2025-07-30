@@ -57,7 +57,6 @@ function(ae2f_Inc_Run_One inp_file_absolute out_file_absolute)
 	get_filename_component(dir "${inp_file_absolute}" DIRECTORY)
 
 	execute_process(
-		WORKING_DIRECTORY 
 		COMMAND		${cmd} ${dir} ${ARGN}
 		INPUT_FILE	${inp_file_absolute}
 		OUTPUT_FILE	${out_file_absolute}
