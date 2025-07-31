@@ -95,7 +95,7 @@ KEYGET:
 				switch(fgetc(STACK_LAST.m_inp)) {
 					case '/': 
 #if DEBUG
-						fputs("//", STACK_LAST.m_inp);
+						fputs("//", stdout);
 #endif
 
 						while((Ch = fgetc(STACK_LAST.m_inp)) != EOF && Ch != '\n' && Ch != '\r') {
@@ -138,7 +138,7 @@ KEYGET:
 					default:
 						fputc(Ch, stdout);
 						goto KEYGET;
-				}
+				} assert(!"THIS IS NOT POSSIBLE");
 
 			default:
 				fputc(Ch, stdout);
