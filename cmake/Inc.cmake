@@ -1,3 +1,7 @@
+
+
+# -DINC_LEAVE_NFOUND
+#	When this flag is set ON, on ignoring nfound of path, it will write the include again.
 function(ae2f_Inc_init prm_DIRLEN prm_PATHLEN prm_STACKLEN prm_INC_IGNORE_STACKSMASH prm_INC_IGNORE_NFOUND prm_INC_REPT_CHECK)
 	file(REMOVE_RECURSE ${ae2f_Inc_ROOT}/build)
 	message("[ae2f_Inc_init]  ${CMAKE_GENERATOR}")

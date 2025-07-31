@@ -235,11 +235,24 @@ STACK_SUB:
 	if(!STACK_NXT.m_inp)
 #if INC_IGNORE_NFOUND
 	{
+#if DEBUG
 		puts("/** Failed but ignoring it. */");
+#endif
+#if INC_LEAVE_NFOUND
+		fputs("#include <", stdout);
+		fputs(inc_path_buff, stdout);
+		puts(">");
+#endif
+
 		goto KEYGET;
 	}
 #else
-	{ return -STATE_FOPEN_BAD; }
+	{
+#if DEBUG
+		puts("/** Failed. */");
+#endif
+		return -STATE_FOPEN_BAD; 
+	}
 #endif
 
 	for(i = strlen(STACK_NXT.m_current); i--;) {
