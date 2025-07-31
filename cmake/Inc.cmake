@@ -53,10 +53,13 @@ function(ae2f_Inc_init prm_DIRLEN prm_PATHLEN prm_STACKLEN prm_INC_IGNORE_STACKS
 endfunction()
 
 function(ae2f_Inc_Run_One inp_file_absolute out_file_absolute)
-	file(GLOB_RECURSE cmd ${ae2f_Macro_ROOT}/build/bin/**)
+	file(GLOB_RECURSE cmd ${ae2f_Inc_ROOT}/build/bin/**)
+	set("INCLUDE ROOT ${ae2f_Inc_ROOT}/")
+
 	get_filename_component(dir "${inp_file_absolute}" DIRECTORY)
 
 	execute_process(
+		WORKING_DIRECTORY ${dir}
 		COMMAND		${cmd} ${dir} ${ARGN}
 		INPUT_FILE	${inp_file_absolute}
 		OUTPUT_FILE	${out_file_absolute}
