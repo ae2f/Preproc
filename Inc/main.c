@@ -16,7 +16,8 @@ enum STATE_t {
 	STATE_OPENING_UNKNOWN,
 	STATE_STACK_SMASHED,
 	STATE_ARGC_UNEXPECTED,
-	STATE_FOPEN_BAD
+	STATE_FOPEN_BAD,
+	STATE_UNEXPECTED
 };
 
 struct STACK_T {
@@ -41,73 +42,116 @@ struct FLAGS_t {
 	/** is a key of include */
 	flag_t	m_Key : 1;
 	flag_t	m_path_nclosed : 1;
-	flag_t	m_Key_Idx : 3;
 	flag_t	m_ManyCmtOutMaybe : 1;
+	flag_t	m_Key_Idx : 4;
 } FLAGS;
 
 char	path_closing;
 char*	path_cursor;
-
-#define ISKEY() \
-	for( \
-			FLAGS.m_Key_Idx = sizeof("include") - 1; \
-			FLAGS.m_Key_Idx-- && inc_key[FLAGS.m_Key_Idx + 1] == "include"[FLAGS.m_Key_Idx]; \
-			) {\
-	} FLAGS.m_Key = FLAGS.m_Key_Idx == 7;
 
 int main(int argc, char** argv) {
 	assert(argc > 0);
 	if(argc < 1) {
 		return -STATE_ARGC_UNEXPECTED;
 	}
-
-	Ch = 0;
-	inc_key[0] = '#';
-	STACK_LAST.m_dir[0] = 0;
-	STACK_LAST.m_inp = stdin;
-
 	for(i = argc; i-- != 1;) {
 		if(strlen(argv[i]) > DIRLEN)
 			return -1;
 	}
 
-	assert(STACK_LAST.m_inp);
+	STACK_LAST.m_inp = stdin;
+	STACK_LAST.m_dir[0] = 0;
 
 KEYGET:
+
+	Ch = 0;
+
+	memset(inc_key, 0, sizeof(inc_key));
+	inc_key[0] = '#';
+
+	assert(STACK_LAST.m_inp);
+
 	while((Ch = fgetc(STACK_LAST.m_inp)) != EOF) {
 		switch(Ch) {
-			case '#':
-				while((Ch = fgetc(STACK_LAST.m_inp)) != EOF && Ch == ' ' || Ch == '\t');
-				if(Ch == EOF) return -STATE_EOF;
-				inc_key[1] = Ch;
-				fgets(inc_key + 2, sizeof(inc_key) - 2, STACK_LAST.m_inp);
+			case '\'':
+				{
+					fputc('\'', stdout);
 
-				ISKEY();
+					while((Ch = fgetc(STACK_LAST.m_inp)) != EOF) {
+						fputc(Ch, stdout);
+						if(Ch == '\'') {
+							goto KEYGET;
+						}
+					}
 
-				if(FLAGS.m_Key) {
-					goto STACK_SUB;
-				} else {
-					fputs(inc_key, stdout);
+				} return -STATE_EOF;
+
+#if 1
+			case '"': 
+				{
+					fputc('"', stdout);
+
+					while((Ch = fgetc(STACK_LAST.m_inp)) != EOF) {
+						fputc(Ch, stdout);
+						if(Ch == '"') {
+							goto KEYGET;
+						}
+					}
+
+				} return -STATE_EOF;
+#endif
+
+			case '#': 
+				{
+					while((Ch = fgetc(STACK_LAST.m_inp)) != EOF 
+							&& (Ch == ' ' 
+								|| Ch == '\t')
+					     );
+					if(Ch == EOF) return -STATE_EOF;
+					inc_key[1] = Ch;
+
+					FLAGS.m_Key_Idx = 2;
+
+					if(Ch == 'i')
+						for(
+								;
+								FLAGS.m_Key_Idx < sizeof("#include") - 1
+								&& (inc_key[FLAGS.m_Key_Idx] = fgetc(STACK_LAST.m_inp)) 
+								== "#include"[FLAGS.m_Key_Idx];
+								FLAGS.m_Key_Idx++
+						   );
+
+					if(FLAGS.m_Key_Idx == sizeof("#include") - 1) {
+						goto STACK_SUB;
+					} else {
+						fputs(inc_key, stdout);
+					}
 				}
-				break;
+				goto KEYGET;
 
 			case '/':
-				switch(fgetc(STACK_LAST.m_inp)) {
+				switch(Ch = fgetc(STACK_LAST.m_inp)) {
 					case '/': 
+						{
 #if DEBUG
-						fputs("//", stdout);
+							fputs("//", stdout);
 #endif
 
-						while((Ch = fgetc(STACK_LAST.m_inp)) != EOF && Ch != '\n' && Ch != '\r') {
+							while((Ch = fgetc(STACK_LAST.m_inp)) != EOF && Ch != '\n' && Ch != '\r') {
 #if DEBUG
-							fputc(Ch, stdout);
+								fputc(Ch, stdout);
 #endif
+							}
+
+							if(Ch == EOF) return -STATE_EOF;
+							puts("");
+							goto KEYGET;
 						}
-
-						if(Ch == EOF) return -STATE_EOF;
-						puts("");
+					default:
+						fputc('/', stdout);
+						fputc(Ch, stdout);
 						goto KEYGET;
-
+#if 1
 					case '*':
 #if DEBUG
 						fputs("/*", stdout);
@@ -121,33 +165,31 @@ KEYGET:
 #endif
 									goto KEYGET;
 								}
-
 #if DEBUG
 								fputc('*', stdout);
 								fputc(Ch, stdout);
 #endif
 							}
-
 #if DEBUG
 							fputc(Ch, stdout);
 #endif
 						}
 
 						goto KEYGET;
+#endif
+				} return -STATE_UNEXPECTED;
 
-					default:
-						fputc(Ch, stdout);
-						goto KEYGET;
-				} assert(!"THIS IS NOT POSSIBLE");
-
-			default:
-				fputc(Ch, stdout);
+			default: 
+				{
+					fputc(Ch, stdout);
+					goto KEYGET;
+				}
 		}
 	}
 
 	goto STACK_ADD;
 STACK_SUB:
-	while((Ch = fgetc(STACK_LAST.m_inp)) != EOF && Ch == ' ' || Ch == '\t');
+	while((Ch = fgetc(STACK_LAST.m_inp)) != EOF && (Ch == ' ' || Ch == '\t'));
 	switch(Ch) {
 		case EOF: 
 #if DEBUG
@@ -185,7 +227,6 @@ STACK_SUB:
 #endif
 
 #if INC_IGNORE_SMASH
-
 
 
 		goto KEYGET;
@@ -286,7 +327,7 @@ STACK_SUB:
 	}
 
 #if DEBUG
-	puts("/** It's not repeating*/");
+	puts("/** It's not repeating */");
 #endif
 #endif
 
@@ -300,13 +341,13 @@ STACK_SUB:
 
 	fputs(STACK_NXT.m_current, stdout);
 
-	puts("\n */");
+	puts("\n */\n");
 #endif
 	++STACK_IDX;
 	goto KEYGET;
 
 STACK_ADD:
-	fputc('\n', stdout);
+	puts("\n");
 
 	if(STACK_IDX) {
 		fclose(STACK_LAST.m_inp);
