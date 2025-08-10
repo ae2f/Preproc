@@ -27,6 +27,7 @@ function(ae2f_FileRaw_init prm_STRGEN prm_BINGEN_BUFFSZ)
 		-DSTRGEN=${prm_STRGEN}
 		-DBINGEN_BUFFSZ=${prm_BINGEN_BUFFSZ}
 		${gen} ${cstd} ${cc}
+		${ae2f_PreProc_C_PRM}
 		${ARGN}
   		RESULT_VARIABLE ConfOut
 	)

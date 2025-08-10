@@ -33,6 +33,7 @@ function(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
 		-Dae2f_Macro_SZPARAM=${prm_SZPARAM}
 		-Dae2f_Macro_SZTPARAM=${prm_SZTPARAM}
         	-Dae2f_MAC_KEYWORD=${ae2f_MAC_KEYWORD}
+		${ae2f_PreProc_C_PRM}
 		${gen} ${cstd} ${cc}
 		${ARGN}
   		RESULT_VARIABLE ConfOut

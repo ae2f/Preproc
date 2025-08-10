@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 3.20)
 
 project(Preproc VERSION 1.1.4)
 
+if(DEFINED ae2f_PreProc_C_COMPILER)
+	set(ae2f_PreProc_C_PRM "-DCMAKE_C_COMPILER=${ae2f_PreProc_C_COMPILER}")
+else()
+	set(ae2f_PreProc_C_PRM "")
+endif()
+
 set(ae2f_Macro_ROOT "${PROJECT_SOURCE_DIR}/Macro" CACHE STRING "${PROJECT_SOURCE_DIR}/Macro")
 set(ae2f_Inc_ROOT "${PROJECT_SOURCE_DIR}/Inc" CACHE STRING "${PROJECT_SOURCE_DIR}/Inc")
 set(ae2f_FileRaw_ROOT "${PROJECT_SOURCE_DIR}/FileRaw" CACHE STRING "${PROJECT_SOURCE_DIR}/FileRaw")
