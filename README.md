@@ -1,4 +1,7 @@
 # ae2f::Preproc
+> This project has been migrated to [codeberg.org](https://codeberg.org/ae2f/Preproc).  
+> You will still be able to access to upstream with github page.
+
 The cmake utilities for enabling template meta programming in C with macro-function generating and including.  
 Basically it uses `stdin` and `stdout` for processing, and you will need to pipeline those outputs.  
     > Which means you will making new files.  
