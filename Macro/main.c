@@ -79,6 +79,8 @@ __REST:
 		continue;
 
 __START:
+		if (c == '\"') goto STRING;
+
 		if (c == '#') {
 			const char _INCLUDE[sizeof("#include") - 1] = "#include";
 			char _SEE_INC[sizeof(_INCLUDE)];
@@ -324,4 +326,23 @@ STACKED:;
 			"\n#define\t__ae2f_MACRO_GENERATED\t0\n");
 
 	return 0;
+
+STRING:
+	fputc('\"', stdout);
+	while((c = fgetc(stdin)) != EOF) {
+		switch(c) {
+			case '\"':
+				goto __REST;
+
+			case '\\':
+				fputc(c, stdout);
+				c = fgetc(stdin);
+				
+			default:
+				fputc(c, stdout);
+				break;
+		}
+	}
+
+	return -1;
 }

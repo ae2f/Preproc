@@ -193,7 +193,7 @@ STACK_SUB:
 	switch(Ch) {
 		case EOF: 
 #if DEBUG
-			puts("/** Unknown EOF bug has appeared. */");
+			puts("/** Unknown EOF bug has appeared. */ \\");
 #endif
 			return -STATE_EOF;
 		case '\"': path_closing = '\"';	break;
@@ -204,17 +204,17 @@ STACK_SUB:
 	}
 
 #if DEBUG
-	puts("/** include detected */");
+	puts("/** include detected */ \\");
 #endif
 
 	path_cursor = inc_path_buff;
 	FLAGS.m_path_nclosed = 1;
 #if DEBUG
-	puts("/** Path cursor */");
+	puts("/** Path cursor */ \\");
 #endif
 	if(STACK_IDX == STACKLEN) {
 #if DEBUG
-		puts("/** Stack has smashed. shame. */");
+		puts("/** Stack has smashed. shame. */ \\");
 		fputs("/*", stdout);
 
 		while((Ch = fgetc(STACK_LAST.m_inp)) != EOF && Ch != '\n' && Ch != '\r') {
@@ -223,7 +223,7 @@ STACK_SUB:
 #endif
 		}
 
-		puts("*/");
+		puts("*/ \\");
 #endif
 
 #if INC_IGNORE_SMASH
@@ -253,12 +253,12 @@ STACK_SUB:
 #if DEBUG
 	fputs("/* Opening: ", stdout);
 	fputs(STACK_NXT.m_current, stdout);
-	fputs(" */\n", stdout);
+	fputs(" */ \\\n", stdout);
 #endif
 	STACK_NXT.m_inp = fopen(STACK_NXT.m_current, "r");
 
 #if DEBUG
-	printf("/** first fp: %p */\n", STACK_NXT.m_inp);
+	printf("/** first fp: %p */ \\\n", STACK_NXT.m_inp);
 #endif
 
 
@@ -269,7 +269,7 @@ STACK_SUB:
 #if DEBUG
 		fputs("/* Opening: ", stdout);
 		fputs(STACK_NXT.m_current, stdout);
-		fputs(" */\n", stdout);
+		fputs(" */ \\\n", stdout);
 #endif
 		STACK_NXT.m_inp = fopen(STACK_NXT.m_current, "r");
 	}
@@ -277,7 +277,7 @@ STACK_SUB:
 #if INC_IGNORE_NFOUND
 	{
 #if DEBUG
-		puts("/** Failed but ignoring it. */");
+		puts("/** Failed but ignoring it. */ \\");
 #endif
 #if INC_LEAVE_NFOUND
 		fputs("#include <", stdout);
@@ -290,7 +290,7 @@ STACK_SUB:
 #else
 	{
 #if DEBUG
-		puts("/** Failed. */");
+		puts("/** Failed. */ \\");
 #endif
 		return -STATE_FOPEN_BAD; 
 	}
@@ -304,8 +304,8 @@ STACK_SUB:
 			STACK_NXT.m_current[i + 1] = Ch;
 
 #if DEBUG
-			printf("/** Current %s */\n", STACK_NXT.m_current);
-			printf("/** Dir %s */\n", STACK_NXT.m_dir);
+			printf("/** Current %s */ \\\n", STACK_NXT.m_current);
+			printf("/** Dir %s */ \\\n", STACK_NXT.m_dir);
 #endif
 			break;
 		}
@@ -314,54 +314,52 @@ STACK_SUB:
 
 #if INC_REPT_CHECK
 #if DEBUG
-	puts("/** Found something. Now let's validate. */");
+	puts("/** Found something. Now let's validate. */ \\");
 #endif
 
 	for(STACK_IDX_BUFF = STACK_IDX; STACK_IDX_BUFF--;) {
 		if(!strcmp(STACK[STACK_IDX_BUFF].m_current, STACK_NXT.m_current)) {
 #if DEBUG
-			puts("/** It's repeating himself for some reason. */");
+			puts("/** It's repeating himself for some reason. */ \\");
 			goto KEYGET;
 #endif
 		}
 	}
 
 #if DEBUG
-	puts("/** It's not repeating */");
+	puts("/** It's not repeating */ \\");
 #endif
 #endif
 
 
 #if DEBUG
 	fputs(
-			"/******************** \n"
-			" * Now the path will be: \n * "
+			"/******************** */\\\n"
+			"/* Now the path will be: */ \\\n /*"
 			, stdout
 	     );
 
 	fputs(STACK_NXT.m_current, stdout);
 
-	puts("\n */\n");
+	puts(" */ \\");
 #endif
 	++STACK_IDX;
 	goto KEYGET;
 
 STACK_ADD:
-	puts("\n");
-
 	if(STACK_IDX) {
 		fclose(STACK_LAST.m_inp);
 		--STACK_IDX;
 
 #if  DEBUG
-		puts("/** One eof gracefully */");
+		puts("/** One eof gracefully */ \\");
 #endif
 
 		goto KEYGET;
 	}
 
 #if DEBUG
-	puts("/** All done. */");
+	puts("/** All done. */ \\");
 #endif
 
 	return -STATE_GOOD;
