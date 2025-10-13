@@ -1,6 +1,6 @@
 #include "./main.auto.h"
 
-#if defined(NDEBUG) && NDEBUG
+#if NDEBUG
 #define DEBUG	0
 #else
 #define DEBUG	1
@@ -216,6 +216,7 @@ STACK_SUB:
 #if DEBUG
 		puts("/** Stack has smashed. shame. */ \\");
 		fputs("/*", stdout);
+#endif
 
 		while((Ch = fgetc(STACK_LAST.m_inp)) != EOF && Ch != '\n' && Ch != '\r') {
 #if DEBUG
@@ -223,8 +224,10 @@ STACK_SUB:
 #endif
 		}
 
+#if DEBUG
 		puts("*/ \\");
 #endif
+
 
 #if INC_IGNORE_SMASH
 
@@ -321,8 +324,9 @@ STACK_SUB:
 		if(!strcmp(STACK[STACK_IDX_BUFF].m_current, STACK_NXT.m_current)) {
 #if DEBUG
 			puts("/** It's repeating himself for some reason. */ \\");
-			goto KEYGET;
+
 #endif
+			goto KEYGET;
 		}
 	}
 
