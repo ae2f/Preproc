@@ -18,3 +18,7 @@ When you define this value on cmake, 't will be expected to valid C compiler for
 - A functional OS which supports standard library of C and pipelining.
     - Unix based systems are recommended.
     - Windows is tested.
+
+# Known Issues
+> Currently it does not understand single-line comments at all.  
+> It could ruin the user experience.
