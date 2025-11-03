@@ -153,26 +153,18 @@ KEYGET:
 						goto KEYGET;
 #if 1
 					case '*':
-#if DEBUG
 						fputs("/*", stdout);
-#endif
 
 						while((Ch = fgetc(STACK_LAST.m_inp)) != EOF) {
 							if(Ch == '*') {
 								if((Ch = fgetc(STACK_LAST.m_inp)) == '/') {
-#if DEBUG
 									fputs("*/", stdout);
-#endif
 									goto KEYGET;
 								}
-#if DEBUG
 								fputc('*', stdout);
 								fputc(Ch, stdout);
-#endif
 							}
-#if DEBUG
 							fputc(Ch, stdout);
-#endif
 						}
 
 						goto KEYGET;
@@ -193,7 +185,7 @@ STACK_SUB:
 	switch(Ch) {
 		case EOF: 
 #if DEBUG
-			puts("/** Unknown EOF bug has appeared. */ \\");
+			puts("/** Unknown EOF bug has appeared. */");
 #endif
 			return -STATE_EOF;
 		case '\"': path_closing = '\"';	break;
@@ -204,17 +196,17 @@ STACK_SUB:
 	}
 
 #if DEBUG
-	puts("/** include detected */ \\");
+	puts("/** include detected */");
 #endif
 
 	path_cursor = inc_path_buff;
 	FLAGS.m_path_nclosed = 1;
 #if DEBUG
-	puts("/** Path cursor */ \\");
+	puts("/** Path cursor */");
 #endif
 	if(STACK_IDX == STACKLEN) {
 #if DEBUG
-		puts("/** Stack has smashed. shame. */ \\");
+		puts("/** Stack has smashed. shame. */");
 		fputs("/*", stdout);
 #endif
 
@@ -225,7 +217,7 @@ STACK_SUB:
 		}
 
 #if DEBUG
-		puts("*/ \\");
+		puts("*/");
 #endif
 
 
@@ -256,12 +248,12 @@ STACK_SUB:
 #if DEBUG
 	fputs("/* Opening: ", stdout);
 	fputs(STACK_NXT.m_current, stdout);
-	fputs(" */ \\\n", stdout);
+	fputs(" */\n", stdout);
 #endif
 	STACK_NXT.m_inp = fopen(STACK_NXT.m_current, "r");
 
 #if DEBUG
-	printf("/** first fp: %p */ \\\n", STACK_NXT.m_inp);
+	printf("/** first fp: %p */\n", STACK_NXT.m_inp);
 #endif
 
 
@@ -272,7 +264,7 @@ STACK_SUB:
 #if DEBUG
 		fputs("/* Opening: ", stdout);
 		fputs(STACK_NXT.m_current, stdout);
-		fputs(" */ \\\n", stdout);
+		fputs(" */ \n", stdout);
 #endif
 		STACK_NXT.m_inp = fopen(STACK_NXT.m_current, "r");
 	}
@@ -280,7 +272,7 @@ STACK_SUB:
 #if INC_IGNORE_NFOUND
 	{
 #if DEBUG
-		puts("/** Failed but ignoring it. */ \\");
+		puts("/** Failed but ignoring it. */");
 #endif
 #if INC_LEAVE_NFOUND
 		fputs("#include <", stdout);
@@ -307,8 +299,8 @@ STACK_SUB:
 			STACK_NXT.m_current[i + 1] = Ch;
 
 #if DEBUG
-			printf("/** Current %s */ \\\n", STACK_NXT.m_current);
-			printf("/** Dir %s */ \\\n", STACK_NXT.m_dir);
+			printf("/** Current %s */\n", STACK_NXT.m_current);
+			printf("/** Dir %s */\n", STACK_NXT.m_dir);
 #endif
 			break;
 		}
