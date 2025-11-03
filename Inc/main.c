@@ -285,7 +285,7 @@ STACK_SUB:
 #else
 	{
 #if DEBUG
-		puts("/** Failed. */ \\");
+		puts("/** Failed. */");
 #endif
 		return -STATE_FOPEN_BAD; 
 	}
@@ -309,13 +309,13 @@ STACK_SUB:
 
 #if INC_REPT_CHECK
 #if DEBUG
-	puts("/** Found something. Now let's validate. */ \\");
+	puts("/** Found something. Now let's validate. */");
 #endif
 
 	for(STACK_IDX_BUFF = STACK_IDX; STACK_IDX_BUFF--;) {
 		if(!strcmp(STACK[STACK_IDX_BUFF].m_current, STACK_NXT.m_current)) {
 #if DEBUG
-			puts("/** It's repeating himself for some reason. */ \\");
+			puts("/** It's repeating himself for some reason. */");
 
 #endif
 			goto KEYGET;
@@ -323,21 +323,21 @@ STACK_SUB:
 	}
 
 #if DEBUG
-	puts("/** It's not repeating */ \\");
+	puts("/** It's not repeating */");
 #endif
 #endif
 
 
 #if DEBUG
 	fputs(
-			"/******************** */\\\n"
-			"/* Now the path will be: */ \\\n /*"
+			"/******************** */\n"
+			"/* Now the path will be: */ \n /*"
 			, stdout
 	     );
 
 	fputs(STACK_NXT.m_current, stdout);
 
-	puts(" */ \\");
+	puts(" */");
 #endif
 	++STACK_IDX;
 	goto KEYGET;
@@ -348,7 +348,7 @@ STACK_ADD:
 		--STACK_IDX;
 
 #if  DEBUG
-		puts("/** One eof gracefully */ \\");
+		puts("/** One eof gracefully */");
 #endif
 
 		goto KEYGET;
@@ -356,6 +356,7 @@ STACK_ADD:
 
 #if DEBUG
 	puts("/** All done. */");
+        puts("");
 #endif
 
 	return -STATE_GOOD;

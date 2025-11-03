@@ -3,15 +3,17 @@
 
 #if STRGEN
 
-int Ch;
 char BackSlash[3] = "\\\\";
 
 int main() {
+        register int Ch;
+
 	fputc('"', stdout);
-	while((Ch = fgetc(stdin)) != EOF) {
+	while((Ch =  fgetc(stdin)) != EOF) {
 		switch(Ch) {
-			case '\n': case '\r': /** Line Changing */
-				fputs("\\n\" \\\n\"", stdout);
+                        case '\0': case '\n': case '\r': /** Line Changing */
+				fputs("\\n\"\\\n\"", stdout);
+                                
 				break;
 			case '\\': case '\'': case '\"':
 				BackSlash[1] = Ch;
