@@ -16,11 +16,11 @@
  * */
 #define ae2f_MAC(a) void
 
-#if !(defined(OFF) && defined(ON))
-#define OFF	0
-#define ON 	1
+#if !(defined(ae2f_OFF) && defined(ae2f_ON))
+#define ae2f_OFF	0
+#define ae2f_ON 	1
 #endif
 
 #ifndef ae2f_MAC_BUILD
-#define ae2f_MAC_BUILD @ae2f_MAC_BUILD@
+#define ae2f_MAC_BUILD ae2f_@ae2f_MAC_BUILD@
 #endif
