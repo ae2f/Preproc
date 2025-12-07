@@ -1,19 +1,18 @@
 #include "./main.auto.h"
 #include <stdio.h>
+#include <stddef.h>
 
 int main(void);
 
 #define BOOK (ae2f_MAC_KEYWORD "(")
 
 #if CMT_REQUIRED
-#define dbg_printf(s, ...) fprintf(stdout, s, __VA_ARGS__)
 #define dbg_puts(s) fputs(s, stdout)
 #else
-#define dbg_printf(s, ...)
 #define dbg_puts(s)
 #endif
 
-#define SZBOOK (sizeof(BOOK) - 1)
+#define SZBOOK ((size_t)(sizeof(BOOK) - 1))
 
 char SEE[sizeof(BOOK)] = {
         0,
@@ -91,8 +90,8 @@ __START:
 			size_t i = 1;
 			_SEE_INC[0] = '#';
 			fputc('#', stdout);
-			for (; i < sizeof(_INCLUDE); i++) {
-				_SEE_INC[i] = fgetc(stdin);
+			for (; i < (size_t)sizeof(_INCLUDE); i++) {
+				_SEE_INC[i] = (char)fgetc(stdin);
 				fputc(_SEE_INC[i], stdout);
 
 				if (_SEE_INC[i] != _INCLUDE[i]) {
@@ -111,10 +110,10 @@ __START:
 		}
 
 		else if (c == (BOOK)[0]) {
+			size_t i = 1;
 			SEE[0] = (BOOK)[0];
-			register size_t i = 1;
 			for (; i < SZBOOK; i++) {
-				SEE[i] = fgetc(stdin);
+				SEE[i] = (char)fgetc(stdin);
 
 				if (SEE[i] != (BOOK)[i]) {
 					SEE[i + 1] = 0;

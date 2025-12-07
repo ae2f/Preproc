@@ -6,4 +6,4 @@ build/*
 */build/*
 .vscode/*
 *.auto.h
-./inc/ae2f/Macro.h
+inc/ae2f/Macro.h

@@ -118,18 +118,41 @@ function(ae2f_Macro_Lib_V prm_namespace prm_name prm_prefix
 
 	file(GLOB_RECURSE ofiles-inc "${prm_inc_out_dir}/*${prm_inc_out_ext}")
 
-	if(ae2f_MAC_BUILD)
+	ae2f_CoreLibTentConfigCustom(
+		${prm_name} ${prm_prefix} ${prm_include_dir} 
+		${prm_namespace} ${prm_config_file}
+		${ARGN} ${files-src} ${ofiles-inc} ${orig-inc}
+		)
+endfunction()
+
+function(ae2f_Macro_Lib_V2 
+		prm_namespace prm_name prm_prefix 
+		prm_src_dir	prm_src_glob
+		prm_inc_dir	prm_inc_glob
+		prm_inc_out_dir	prm_inc_out_ext
+
+		prm_config_file	prm_include_dir
+
+		prm_guard)
+	if(NOT ${prm_guard})
+		ae2f_Macro_Lib_V(
+			${prm_namespace}	${prm_name} ${prm_prefix} 
+			${prm_src_dir}		${prm_src_glob}
+			${prm_inc_dir}		${prm_inc_glob}
+			${prm_inc_out_dir}	${prm_inc_out_ext}
+			${prm_config_file}	${prm_include_dir}
+			${ARGN}
+			)
+	else()
+		file(GLOB_RECURSE files-inc "${prm_inc_dir}/${prm_inc_glob}")
+		file(GLOB_RECURSE files-src "${prm_src_dir}/${prm_src_glob}")
+		file(GLOB_RECURSE orig-inc  "${prm_include_dir}/*")
+		file(GLOB_RECURSE ofiles-inc "${prm_inc_out_dir}/*${prm_inc_out_ext}")
+
 		ae2f_CoreLibTentConfigCustom(
 			${prm_name} ${prm_prefix} ${prm_include_dir} 
 			${prm_namespace} ${prm_config_file}
 			${ARGN} ${files-src} ${ofiles-inc} ${orig-inc}
-			)
-	else()
-		ae2f_CoreLibTentConfigCustom(
-			${prm_name} INTERFACE ${prm_include_dir} 
-			${prm_namespace} ${prm_config_file} 
-			${ofiles-inc}
-			${ARGN} ${orig-inc}
 			)
 	endif()
 endfunction()
