@@ -61,8 +61,9 @@ endfunction()
 
 function(ae2f_FileRaw_Run_One2 inp_file_absolute out_file_absolute keygen)
 	file(GLOB_RECURSE cmd ${ae2f_FileRaw_ROOT}/build/bin/**)
+	message("[ae2f_FileRaw_Run_One2] ${inp_file_absolute} ${out_file_absolute} ${keygen}")
 	execute_process(
-		COMMAND		${cmd} ${kengen}
+		COMMAND		${cmd} "${keygen}"
 		INPUT_FILE	${inp_file_absolute}
 		OUTPUT_FILE	${out_file_absolute}
 	)
