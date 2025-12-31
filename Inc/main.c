@@ -356,8 +356,8 @@ STACK_ADD:
 
 #if DEBUG
 	puts("/** All done. */");
-        puts("");
 #endif
+	puts("");
 
 	return -STATE_GOOD;
 }
