@@ -1,8 +1,6 @@
 set(ae2f_MAC_KEYWORD "ae2f_MAC")
 option(ae2f_MAC_BUILD "Convention variable. If on, macro function will be built." OFF)
 
-include(${PROJECT_SOURCE_DIR}/cmake/Core.cmake)
-
 function(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
 	file(REMOVE_RECURSE ${ae2f_Macro_ROOT}/build)
   	message("[ae2f_Macro_init]  ${CMAKE_GENERATOR}")
