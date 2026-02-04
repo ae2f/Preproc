@@ -1,33 +1,32 @@
-
-
 # -DINC_LEAVE_NFOUND
 #	When this flag is set ON, on ignoring nfound of path, it will write the include again.
-function(ae2f_Inc_init prm_DIRLEN prm_PATHLEN prm_STACKLEN prm_INC_IGNORE_STACKSMASH prm_INC_IGNORE_NFOUND prm_INC_REPT_CHECK)
-	file(REMOVE_RECURSE ${ae2f_Inc_ROOT}/build)
-	message("[ae2f_Inc_init]  ${CMAKE_GENERATOR}")
+macro(ae2f_Inc_init prm_DIRLEN prm_PATHLEN prm_STACKLEN prm_INC_IGNORE_STACKSMASH prm_INC_IGNORE_NFOUND prm_INC_REPT_CHECK)
+	message(STATUS "[ae2f::Inc::init]")
 
-	if(DEFINED CMAKE_C_STANDARD)
-		set(cstd "-DCMAKE_C_STANDARD=${CMAKE_C_STANDARD}")
+	if(DEFINED ae2f_PreProc_CMAKE_C_STANDARD)
+		set(cstd "-DCMAKE_C_STANDARD=${ae2f_PreProc_CMAKE_C_STANDARD}")
 	else()
 		set(cstd "")
 	endif()
 
-	if(DEFINED CMAKE_C_COMPILER)
-		set(cc "-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}")
+	if(DEFINED ae2f_PreProc_CMAKE_C_COMPILER)
+		set(cc "-DCMAKE_C_COMPILER=${ae2f_PreProc_CMAKE_C_COMPILER}")
 	else()
 		set(cc "")
 	endif()
 
-	if(DEFINED CMAKE_GENERATOR)
-		set(gen "-G${CMAKE_GENERATOR}")
+	if(DEFINED ae2f_PreProc_CMAKE_GENERATOR)
+		set(gen "-G${ae2f_PreProc_CMAKE_GENERATOR}")
 	else()
 		set(gen "")
 	endif()
 
+	set(__name ${prm_DIRLEN}${prm_PATHLEN}${prm_STACKLEN}${prm_INC_IGNORE_NFOUND}${prm_INC_IGNORE_STACKSMASH}${prm_INC_REPT_CHECK})
+
 	execute_process(
 		WORKING_DIRECTORY ${ae2f_Inc_ROOT}
-		COMMAND ${CMAKE_COMMAND} 
-		"-S" "." "-B" "./build"
+		COMMAND ${CMAKE_COMMAND}
+		"-S" "." "-B" ${PROJECT_BINARY_DIR}/util/Inc/${__name}
 		${gen} ${cstd} ${cc}
 		-DDIRLEN=${prm_DIRLEN}
 		-DPATHLEN=${prm_PATHLEN}
@@ -46,27 +45,35 @@ function(ae2f_Inc_init prm_DIRLEN prm_PATHLEN prm_STACKLEN prm_INC_IGNORE_STACKS
 
 	execute_process(
 		WORKING_DIRECTORY ${ae2f_Inc_ROOT}
-		COMMAND ${CMAKE_COMMAND} "--build" "build"
+		COMMAND ${CMAKE_COMMAND} "--build" ${PROJECT_BINARY_DIR}/util/Inc/${__name}
   		RESULT_VARIABLE BuildOut
 		)
+
+	file(GLOB_RECURSE ae2f_inc_last_exe ${PROJECT_BINARY_DIR}/util/Inc/${__name}/bin/**)
   
  	if(NOT BuildOut EQUAL 0)
 		message(FATAL_ERROR "[ae2f_Inc_init] Build failed. ${BuildOut}")
 	endif()
 
+
+
 	message("[ae2f_Inc_init] Succeed.")
-endfunction()
+endmacro()
 
 function(ae2f_Inc_Run_One inp_file_absolute out_file_absolute)
-	file(GLOB_RECURSE cmd ${ae2f_Inc_ROOT}/build/bin/**)
-	set("INCLUDE ROOT ${ae2f_Inc_ROOT}/")
-
 	get_filename_component(dir "${inp_file_absolute}" DIRECTORY)
 
-	execute_process(
-		WORKING_DIRECTORY ${dir}
-		COMMAND		${cmd} ${dir} ${ARGN}
-		INPUT_FILE	${inp_file_absolute}
-		OUTPUT_FILE	${out_file_absolute}
-	)
+	add_custom_command(
+		OUTPUT			${out_file_absolute}
+		MAIN_DEPENDENCY		${inp_file_absolute}
+		WORKING_DIRECTORY	${dir}
+
+		COMMAND 
+		${ae3f_easyredir_exe}
+		${inp_file_absolute} ${out_file_absolute} "\"\"" 0
+		${ae2f_inc_last_exe} ${dir} ${ARGN}
+
+		COMMENT "ae2f::Inc ${dir} ${ARGN}"
+		VERBATIM
+		)
 endfunction()

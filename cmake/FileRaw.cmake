@@ -1,70 +1,85 @@
-function(ae2f_FileRaw_init prm_STRGEN prm_BINGEN_BUFFSZ)
-	file(REMOVE_RECURSE ${ae2f_FileRaw_ROOT}/build)
-	message("[ae2f_FileRaw_init]  ${CMAKE_GENERATOR}")
+macro(ae2f_FileRaw_init prm_STRGEN prm_BINGEN_BUFFSZ)
+	message(STATUS "ae2f::FileRaw::init")
 
-	if(DEFINED CMAKE_C_STANDARD)
-		set(cstd "-DCMAKE_C_STANDARD=${CMAKE_C_STANDARD}")
+	if(DEFINED ae2f_PreProc_CMAKE_C_STANDARD)
+		set(cstd "-DCMAKE_C_STANDARD=${ae2f_preProc_CMAKE_C_STANDARD}")
 	else()
 		set(cstd "")
 	endif()
 
-	if(DEFINED CMAKE_C_COMPILER)
-		set(cc "-DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}")
+	if(DEFINED ae2f_PreProc_CMAKE_C_COMPILER)
+		set(cc "-DCMAKE_C_COMPILER=${ae2f_PreProc_CMAKE_C_COMPILER}")
 	else()
 		set(cc "")
 	endif()
 
-	if(DEFINED CMAKE_GENERATOR)
-		set(gen "-G${CMAKE_GENERATOR}")
+	if(DEFINED ae2f_PreProc_CMAKE_GENERATOR)
+		set(gen "-G${ae2f_PreProc_CMAKE_GENERATOR}")
 	else()
 		set(gen "")
 	endif()
 
 	execute_process(
 		WORKING_DIRECTORY ${ae2f_FileRaw_ROOT}
-		COMMAND ${CMAKE_COMMAND}
-		"-S" "." "-B" "./build"
+		COMMAND 
+		${CMAKE_COMMAND} "-S" "." "-B" ${PROJECT_BINARY_DIR}/util/FileRaw/A${prm_STRGEN}
 		-DSTRGEN=${prm_STRGEN}
 		-DBINGEN_BUFFSZ=${prm_BINGEN_BUFFSZ}
 		${gen} ${cstd} ${cc}
 		${ae2f_PreProc_C_PRM}
 		${ARGN}
-  		RESULT_VARIABLE ConfOut
-	)
+		RESULT_VARIABLE ConfOut
+		)
 
- 	if(NOT ConfOut EQUAL 0)
-		message(FATAL_ERROR "[ae2f_FileRaw_init] Configuration failed. ${ConfOut}")
+	if(NOT ConfOut EQUAL 0)
+		message(FATAL_ERROR "[ae2f::FileRaw::init] Configuration failed. ${ConfOut}")
 	endif()
 
 	execute_process(
 		WORKING_DIRECTORY ${ae2f_FileRaw_ROOT}
-		COMMAND ${CMAKE_COMMAND} "--build" "build"
-  		RESULT_VARIABLE BuildOut
+		COMMAND ${CMAKE_COMMAND} "--build" 
+		${PROJECT_BINARY_DIR}/util/FileRaw/A${prm_STRGEN}
+		RESULT_VARIABLE BuildOut
 		)
-  
- 	if(NOT BuildOut EQUAL 0)
-		message(FATAL_ERROR "[ae2f_FileRaw_init] Build failed. ${BuildOut}")
+
+	if(NOT BuildOut EQUAL 0)
+		message(FATAL_ERROR "[ae2f::FileRaw::init] Build failed. ${BuildOut}")
 	endif()
 
-	message("[ae2f_FileRaw_init] Succeed.")
-endfunction()
+	file(GLOB_RECURSE ae2f_fileraw_last_exe ${PROJECT_BINARY_DIR}/util/FileRaw/A${prm_STRGEN}/bin/**)
+	message(STATUS "[ae2f::FileRaw::init] Succeed.")
+endmacro()
 
 
 function(ae2f_FileRaw_Run_One inp_file_absolute out_file_absolute)
-	file(GLOB_RECURSE cmd ${ae2f_FileRaw_ROOT}/build/bin/**)
-	execute_process(
-		COMMAND		${cmd}
-		INPUT_FILE	${inp_file_absolute}
-		OUTPUT_FILE	${out_file_absolute}
-	)
+	message(STATUS "cfg::ae2f::FileRaw ${inp_file_absolute} ${out_file_absolute}")
+	add_custom_command(
+		OUTPUT		${out_file_absolute}
+		MAIN_DEPENDENCY	${inp_file_absolute}
+
+		COMMAND 
+		${ae3f_easyredir_exe}
+		${inp_file_absolute} ${out_file_absolute} "\"\"" 0
+		${ae2f_fileraw_last_exe}
+
+		COMMENT "ae2f::FileRaw ${inp_file_absolute} ${out_file_absolute}"
+		VERBATIM
+		)
 endfunction()
 
 function(ae2f_FileRaw_Run_One2 inp_file_absolute out_file_absolute keygen)
-	file(GLOB_RECURSE cmd ${ae2f_FileRaw_ROOT}/build/bin/**)
-	message("[ae2f_FileRaw_Run_One2] ${inp_file_absolute} ${out_file_absolute} ${keygen}")
-	execute_process(
-		COMMAND		${cmd} "${keygen}"
-		INPUT_FILE	${inp_file_absolute}
-		OUTPUT_FILE	${out_file_absolute}
-	)
+	message(STATUS "cfg::ae2f::FileRaw2 ${inp_file_absolute} ${out_file_absolute}")
+	add_custom_command(
+		OUTPUT		${out_file_absolute}
+		MAIN_DEPENDENCY	${inp_file_absolute}
+
+		COMMAND 
+		${ae3f_easyredir_exe}
+		${inp_file_absolute} ${out_file_absolute} "\"\"" 0
+		${ae2f_fileraw_last_exe}
+		${keygen}
+
+		COMMENT "ae2f::FileRaw2 ${inp_file_absolute} ${out_file_absolute}"
+		VERBATIM
+		)
 endfunction()

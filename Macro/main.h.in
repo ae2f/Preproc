@@ -1,0 +1,4 @@
+#define ae2f_MAC_KEYWORD "@ae2f_MAC_KEYWORD@"
+#define CMT_REQUIRED @ae2f_Macro_CMT_REQUIRED@
+#define SZPARAM @ae2f_Macro_SZPARAM@
+#define SZTPARAM @ae2f_Macro_SZTPARAM@

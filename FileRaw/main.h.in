@@ -1,0 +1,4 @@
+#define OFF		0
+#define ON		1
+#define STRGEN		@STRGEN@
+#define BINGEN_BUFFSZ	@BINGEN_BUFFSZ@

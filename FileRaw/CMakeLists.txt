@@ -8,10 +8,7 @@ option(STRGEN "" OFF)
 set(BINGEN_BUFFSZ 50)
 
 add_executable(FileRaw main.c)
-file(
-	WRITE ${PROJECT_SOURCE_DIR}/main.auto.h
-	"#define OFF	0\n"
-	"#define ON	1\n"
-	"#define STRGEN ${STRGEN}\n"
-	"#define BINGEN_BUFFSZ ${BINGEN_BUFFSZ}\n"
-)
+configure_file(
+	${CMAKE_CURRENT_SOURCE_DIR}/main.h.in
+	${CMAKE_CURRENT_SOURCE_DIR}/.main.h
+	)

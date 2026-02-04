@@ -1,4 +1,4 @@
-#include "./main.auto.h"
+#include "./.main.h"
 
 #if NDEBUG
 #define DEBUG	0

@@ -1,4 +1,4 @@
-#include "./main.auto.h"
+#include "./.main.h"
 #include <stdio.h>
 #include <stddef.h>
 

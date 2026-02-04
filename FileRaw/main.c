@@ -1,4 +1,4 @@
-#include "./main.auto.h"
+#include "./.main.h"
 #include <stdio.h>
 
 #if STRGEN
@@ -27,7 +27,7 @@ OVER:
 				Number += sizeof("\\n\" \\\n\"") - 1;
 				break;
 			case '\\': case '\'': case '\"':
-				BackSlash[1] = Ch;
+				BackSlash[1] = (char)Ch;
 				fputs(BackSlash, stdout);
 				Number += 2;
 				break;
