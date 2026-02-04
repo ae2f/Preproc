@@ -22,7 +22,7 @@ macro(ae2f_FileRaw_init prm_STRGEN prm_BINGEN_BUFFSZ)
 	execute_process(
 		WORKING_DIRECTORY ${ae2f_FileRaw_ROOT}
 		COMMAND 
-		${CMAKE_COMMAND} "-S" "." "-B" ${PROJECT_BINARY_DIR}/util/FileRaw/A${prm_STRGEN}
+		${CMAKE_COMMAND} "-S" "." "-B" ${ae2f_Preproc_BINROOT}/util/FileRaw/A${prm_STRGEN}
 		-DSTRGEN=${prm_STRGEN}
 		-DBINGEN_BUFFSZ=${prm_BINGEN_BUFFSZ}
 		${gen} ${cstd} ${cc}
@@ -38,7 +38,7 @@ macro(ae2f_FileRaw_init prm_STRGEN prm_BINGEN_BUFFSZ)
 	execute_process(
 		WORKING_DIRECTORY ${ae2f_FileRaw_ROOT}
 		COMMAND ${CMAKE_COMMAND} "--build" 
-		${PROJECT_BINARY_DIR}/util/FileRaw/A${prm_STRGEN}
+		${ae2f_Preproc_BINROOT}/util/FileRaw/A${prm_STRGEN}
 		RESULT_VARIABLE BuildOut
 		)
 
@@ -46,7 +46,7 @@ macro(ae2f_FileRaw_init prm_STRGEN prm_BINGEN_BUFFSZ)
 		message(FATAL_ERROR "[ae2f::FileRaw::init] Build failed. ${BuildOut}")
 	endif()
 
-	file(GLOB_RECURSE ae2f_fileraw_last_exe ${PROJECT_BINARY_DIR}/util/FileRaw/A${prm_STRGEN}/bin/**)
+	file(GLOB_RECURSE ae2f_fileraw_last_exe ${ae2f_Preproc_BINROOT}/util/FileRaw/A${prm_STRGEN}/bin/**)
 	message(STATUS "[ae2f::FileRaw::init] Succeed.")
 endmacro()
 

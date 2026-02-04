@@ -26,7 +26,7 @@ macro(ae2f_Inc_init prm_DIRLEN prm_PATHLEN prm_STACKLEN prm_INC_IGNORE_STACKSMAS
 	execute_process(
 		WORKING_DIRECTORY ${ae2f_Inc_ROOT}
 		COMMAND ${CMAKE_COMMAND}
-		"-S" "." "-B" ${PROJECT_BINARY_DIR}/util/Inc/${__name}
+		"-S" "." "-B" ${ae2f_Preproc_BINROOT}/util/Inc/${__name}
 		${gen} ${cstd} ${cc}
 		-DDIRLEN=${prm_DIRLEN}
 		-DPATHLEN=${prm_PATHLEN}
@@ -45,11 +45,11 @@ macro(ae2f_Inc_init prm_DIRLEN prm_PATHLEN prm_STACKLEN prm_INC_IGNORE_STACKSMAS
 
 	execute_process(
 		WORKING_DIRECTORY ${ae2f_Inc_ROOT}
-		COMMAND ${CMAKE_COMMAND} "--build" ${PROJECT_BINARY_DIR}/util/Inc/${__name}
+		COMMAND ${CMAKE_COMMAND} "--build" ${ae2f_Preproc_BINROOT}/util/Inc/${__name}
   		RESULT_VARIABLE BuildOut
 		)
 
-	file(GLOB_RECURSE ae2f_inc_last_exe ${PROJECT_BINARY_DIR}/util/Inc/${__name}/bin/**)
+	file(GLOB_RECURSE ae2f_inc_last_exe ${ae2f_Preproc_BINROOT}/util/Inc/${__name}/bin/**)
   
  	if(NOT BuildOut EQUAL 0)
 		message(FATAL_ERROR "[ae2f_Inc_init] Build failed. ${BuildOut}")

@@ -34,12 +34,12 @@ macro(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
 
 	if(${prm_SZPARAM} GREATER ${ae2f_Macro${__name}SZPRM} OR 
 			${prm_SZTPARAM} GREATER ${ae2f_Macro${__name}SZTPRM})
-		file(REMOVE_RECURSE ${PROJECT_BINARY_DIR}/util/Macro/${__name})
-		file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/util/Macro/${__name})
+		file(REMOVE_RECURSE ${ae2f_Preproc_BINROOT}/util/Macro/${__name})
+		file(MAKE_DIRECTORY ${ae2f_Preproc_BINROOT}/util/Macro/${__name})
 		execute_process(
 			WORKING_DIRECTORY ${ae2f_Macro_ROOT}
 			COMMAND ${CMAKE_COMMAND}
-			"-S" "." "-B" "${PROJECT_BINARY_DIR}/util/Macro/${__name}"
+			"-S" "." "-B" "${ae2f_Preproc_BINROOT}/util/Macro/${__name}"
 			-Dae2f_Macro_CMT_REQUIRED=${prm_CMT_REQUIRED}
 			-Dae2f_Macro_SZPARAM=${prm_SZPARAM}
 			-Dae2f_Macro_SZTPARAM=${prm_SZTPARAM}
@@ -55,7 +55,7 @@ macro(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
 		endif()
 
 		execute_process(
-			WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/util/Macro/${__name}
+			WORKING_DIRECTORY ${ae2f_Preproc_BINROOT}/util/Macro/${__name}
 			COMMAND ${CMAKE_COMMAND} "--build" "."
 			RESULT_VARIABLE BuildOut
 			)
@@ -65,7 +65,7 @@ macro(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
 		endif()
 
 		message(STATUS "[ae2f::Macro::init] configuration succeed")
-		file(GLOB_RECURSE ae2f_macro_last_exe ${PROJECT_BINARY_DIR}/util/Macro/${__name}/bin/**)
+		file(GLOB_RECURSE ae2f_macro_last_exe ${ae2f_Preproc_BINROOT}/util/Macro/${__name}/bin/**)
 	endif()
 
 	if(${prm_SZPARAM} GREATER ${ae2f_Macro${__name}SZPRM})
