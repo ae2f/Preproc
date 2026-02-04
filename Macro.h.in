@@ -14,7 +14,7 @@
  * @details
  * Its parameters will be additional template parameters you could customise.
  * */
-#define ae2f_MAC(a) void
+#define ae2f_MAC(a) static void
 
 #if !(defined(ae2f_OFF) && defined(ae2f_ON))
 #define ae2f_OFF	0
