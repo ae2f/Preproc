@@ -22,3 +22,5 @@ When you define this value on cmake, 't will be expected to valid C compiler for
 # Known Issues
 > Currently it does not understand single-line comments at all.  
 > It could ruin the user experience.
+
+> It cannot be installable due to my lack of understanding of cmake.
