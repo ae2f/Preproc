@@ -117,20 +117,21 @@ macro(ae2f_Macro_Lib_V prm_namespace prm_name prm_prefix
 	file(GLOB_RECURSE files-inc "${prm_inc_dir}/${prm_inc_glob}")
 	file(GLOB_RECURSE files-src "${prm_src_dir}/${prm_src_glob}")
 	file(GLOB_RECURSE orig-inc  "${prm_include_dir}/*")
+	set(ofiles-inc "")
+
+	foreach(file ${files-inc})
+		get_filename_component(path_dir "${file}" DIRECTORY)
+		file(RELATIVE_PATH path_dir_rel ${prm_inc_dir} ${path_dir})
+		get_filename_component(path_no_ext "${file}" NAME_WE)
+		ae2f_Macro_one(${file} ${prm_inc_out_dir}/${path_dir_rel}/${path_no_ext}${prm_inc_out_ext})
+		set(ofiles-inc ${ofiles-inc} ${prm_inc_out_dir}/${path_dir_rel}/${path_no_ext}${prm_inc_out_ext})
+	endforeach()
 
 	ae2f_CoreLibTentConfigCustom(
 		${prm_name} ${prm_prefix} ${prm_include_dir} 
 		${prm_namespace} ${prm_config_file}
 		${ARGN} ${files-src} ${ofiles-inc} ${orig-inc}
 		)
-
-	foreach(file ${files-inc})
-		get_filename_component(path_dir "${file}" DIRECTORY)
-		file(RELATIVE_PATH path_dir_rel ${prm_inc_dir} ${path_dir})
-		ae2f_Macro_cvrt(${file} ${prm_inc_out_dir}/${path_dir_rel} ${prm_inc_out_ext})
-	endforeach()
-
-	file(GLOB_RECURSE ofiles-inc "${prm_inc_out_dir}/*${prm_inc_out_ext}")
 endmacro()
 
 macro(ae2f_Macro_Lib_V2 
