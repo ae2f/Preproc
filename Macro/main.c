@@ -109,6 +109,8 @@ __START:
 			}
 		}
 
+		if (c == '$') c = '$';
+
 		else if (c == (BOOK)[0]) {
 			size_t i = 1;
 			SEE[0] = (BOOK)[0];
