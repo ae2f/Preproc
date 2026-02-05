@@ -55,6 +55,8 @@ if(NOT EXISTS ${PROJECT_BINARY_DIR}/util/easyredir/bin)
 		"-B" "${PROJECT_BINARY_DIR}/util/easyredir"
 		"-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=bin"
 		"-DCMAKE_PDB_OUTPUT_DIRECTORY=pdb"
+		"-Dae2f_ProjRoot=${ae2f_ProjRoot}"
+		"-Dae2f_submod=${ae2f_submod}"
 		${ae2f_PreProc_CSTD_PRM}
 		${ae2f_PreProc_C_PRM}
 		)
