@@ -109,8 +109,6 @@ __START:
 			}
 		}
 
-		if (c == '$') c = '$';
-
 		else if (c == (BOOK)[0]) {
 			size_t i = 1;
 			SEE[0] = (BOOK)[0];
@@ -274,7 +272,7 @@ PRM_CASE_BLANK:
 							PARAM[prm] = ' ';
 							PARAM[prm + 1] = '\\';
 							PARAM[prm + 2] = '\n';
-							PARAM[prm + 3] = c;
+							PARAM[prm + 3] = (char)c;
 							PARAM[prm + 4] = 0;
 							l = fputs(PARAM, stdout);
 						} else
@@ -311,6 +309,8 @@ casenewlines:
 
 						break;
 
+					case '$':
+						c = '#';
 					default:
 						l = fputc(c, stdout);
 						if (l < 0)

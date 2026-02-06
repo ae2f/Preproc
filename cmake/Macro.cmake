@@ -86,11 +86,18 @@ macro(ae2f_Macro_one prm_in prm_out)
 
 		COMMAND 
 		${ae3f_easyredir_exe}
-		${prm_in} ${prm_out} "\"\"" 0
+		${prm_in} ${prm_out} ${prm_out}.err 0
 		${ae2f_macro_last_exe}
 
 		COMMENT "ae2f::Macro ${prm_in} ${prm_out}"
 		VERBATIM
+		)
+
+	add_custom_command(
+		OUTPUT		${prm_out}.err
+		MAIN_DEPENDENCY	${prm_in}
+		VERBATIM
+		COMMAND	${CMAKE_COMMAND} --version
 		)
 endmacro()
 
@@ -143,25 +150,29 @@ macro(ae2f_Macro_Lib_V2
 		prm_config_file	prm_include_dir
 
 		prm_guard)
-	if(NOT ${prm_guard})
-		ae2f_Macro_Lib_V(
-			${prm_namespace}	${prm_name} ${prm_prefix} 
-			${prm_src_dir}		${prm_src_glob}
-			${prm_inc_dir}		${prm_inc_glob}
-			${prm_inc_out_dir}	${prm_inc_out_ext}
-			${prm_config_file}	${prm_include_dir}
-			${ARGN}
-			)
-	else()
-		file(GLOB_RECURSE files-inc "${prm_inc_dir}/${prm_inc_glob}")
-		file(GLOB_RECURSE files-src "${prm_src_dir}/${prm_src_glob}")
-		file(GLOB_RECURSE orig-inc  "${prm_include_dir}/*")
-		file(GLOB_RECURSE ofiles-inc "${prm_inc_out_dir}/*${prm_inc_out_ext}")
 
-		ae2f_CoreLibTentConfigCustom(
-			${prm_name} ${prm_prefix} ${prm_include_dir} 
-			${prm_namespace} ${prm_config_file}
-			${ARGN} ${files-src} ${ofiles-inc} ${orig-inc}
+	ae2f_Macro_Lib_V(
+		${prm_namespace}	${prm_name} ${prm_prefix} 
+		${prm_src_dir}		${prm_src_glob}
+		${prm_inc_dir}		${prm_inc_glob}
+		${prm_inc_out_dir}	${prm_inc_out_ext}
+		${prm_config_file}	${prm_include_dir}
+		${ARGN}
+		)
+
+	if(NOT ${prm_guard})
+		file(GLOB_RECURSE files-inc "${prm_inc_dir}/${prm_inc_glob}")
+		# message(FATAL_ERROR ${files-inc})
+
+		add_executable(
+			dvl-${prm_namespace}-${prm_name}
+			${ae2f_Preproc_ROOT}/cmake/dummymain.c
+			${files-inc}
+			)
+
+		target_link_libraries(
+			dvl-${prm_namespace}-${prm_name}
+			PUBLIC ${prm_namespace}::${prm_name}
 			)
 	endif()
 endmacro()

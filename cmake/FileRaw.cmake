@@ -59,10 +59,16 @@ function(ae2f_FileRaw_Run_One inp_file_absolute out_file_absolute)
 
 		COMMAND 
 		${ae3f_easyredir_exe}
-		${inp_file_absolute} ${out_file_absolute} "\"\"" 0
+		${inp_file_absolute} ${out_file_absolute} ${out_file_absolute}.err 0
 		${ae2f_fileraw_last_exe}
-
 		COMMENT "ae2f::FileRaw ${inp_file_absolute} ${out_file_absolute}"
+		VERBATIM
+		)
+
+	add_custom_command(
+		OUTPUT		${out_file_absolute}.err
+		MAIN_DEPENDENCY	${inp_file_absolute}
+		COMMAND	${CMAKE_COMMAND} --version
 		VERBATIM
 		)
 endfunction()

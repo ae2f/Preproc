@@ -70,10 +70,19 @@ function(ae2f_Inc_Run_One inp_file_absolute out_file_absolute)
 
 		COMMAND 
 		${ae3f_easyredir_exe}
-		${inp_file_absolute} ${out_file_absolute} "\"\"" 0
+		${inp_file_absolute} ${out_file_absolute} ${out_file_absolute}.err 0
 		${ae2f_inc_last_exe} ${dir} ${ARGN}
 
 		COMMENT "ae2f::Inc ${dir} ${ARGN}"
+		VERBATIM
+		)
+
+	add_custom_command(
+		OUTPUT			${out_file_absolute}.err
+		MAIN_DEPENDENCY		${inp_file_absolute}
+
+		COMMAND 
+		${CMAKE_COMMAND} --version
 		VERBATIM
 		)
 endfunction()
