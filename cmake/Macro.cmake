@@ -97,7 +97,8 @@ macro(ae2f_Macro_one prm_in prm_out)
 		OUTPUT		${prm_out}.err
 		MAIN_DEPENDENCY	${prm_in}
 		VERBATIM
-		COMMAND	${CMAKE_COMMAND} --version
+		COMMAND	${ae3f_easyredir_exe} ${prm_in} ${prm_out}.err ${prm_out}.err 0
+		${CMAKE_COMMAND} --version
 		)
 endmacro()
 
