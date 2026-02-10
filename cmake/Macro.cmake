@@ -74,7 +74,7 @@ macro(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
 	if(${prm_SZTPARAM} GREATER ${ae2f_Macro${__name}SZTPRM})
 		set(ae2f_Macro${__name}SZTPRM ${prm_SZTPARAM})
 	endif()
-	message("[ae2f_Macro_init] Succeed.")
+	message(STATUS "[ae2f_Macro_init] Succeed. ${ae2f_macro_last_exe}")
 endmacro()
 
 macro(ae2f_Macro_one prm_in prm_out)

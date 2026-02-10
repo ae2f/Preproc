@@ -44,30 +44,23 @@ if(NOT EXISTS ${ae3f_easyredir_Wh})
 		)
 endif()
 
-if(NOT EXISTS ${PROJECT_BINARY_DIR}/util/easyredir/bin)
-	file(
-		MAKE_DIRECTORY 
-		${PROJECT_BINARY_DIR}/util/easyredir
-		)
+execute_process(
+	COMMAND ${CMAKE_COMMAND}
+	"-S" "${ae3f_easyredir_Wh}"
+	"-B" "${PROJECT_BINARY_DIR}/util/easyredir"
+	"-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=bin"
+	"-DCMAKE_PDB_OUTPUT_DIRECTORY=pdb"
+	"-Dae2f_ProjRoot=${ae2f_ProjRoot}"
+	"-Dae2f_submod=${ae2f_submod}"
+	${ae2f_PreProc_CSTD_PRM}
+	${ae2f_PreProc_C_PRM}
+	"-DCMAKE_BUILD_TYPE=Release"
+	)
 
-	execute_process(
-		COMMAND ${CMAKE_COMMAND}
-		"-S" "${ae3f_easyredir_Wh}"
-		"-B" "${PROJECT_BINARY_DIR}/util/easyredir"
-		"-DCMAKE_RUNTIME_OUTPUT_DIRECTORY=bin"
-		"-DCMAKE_PDB_OUTPUT_DIRECTORY=pdb"
-		"-Dae2f_ProjRoot=${ae2f_ProjRoot}"
-		"-Dae2f_submod=${ae2f_submod}"
-		${ae2f_PreProc_CSTD_PRM}
-		${ae2f_PreProc_C_PRM}
-		)
-
-	execute_process(
-		COMMAND 
-		${CMAKE_COMMAND} "--build" "${PROJECT_BINARY_DIR}/util/easyredir"
-		)
-
-endif()
+execute_process(
+	COMMAND 
+	${CMAKE_COMMAND} "--build" "${PROJECT_BINARY_DIR}/util/easyredir"
+	)
 
 file(GLOB_RECURSE _ae3f_easyredir_exe ${PROJECT_BINARY_DIR}/util/easyredir/bin/**)
 set(ae3f_easyredir_exe ${_ae3f_easyredir_exe} CACHE STRING "executable of easyredir")

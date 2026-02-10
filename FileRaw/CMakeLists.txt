@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(FileRaw_BIN)
+project(FileRaw_BIN LANGUAGES C)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_PDB_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/pdb)
