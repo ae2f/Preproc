@@ -14,6 +14,12 @@ else()
 	set(ae2f_PreProc_CSTD_PRM "")
 endif()
 
+if(DEFINED ae2f_PreProc_CMAKE_GENERATOR)
+	set(gen "-G${ae2f_PreProc_CMAKE_GENERATOR}")
+else()
+	set(gen "")
+endif()
+
 set(ae2f_Macro_ROOT "${PROJECT_SOURCE_DIR}/Macro" CACHE STRING "${PROJECT_SOURCE_DIR}/Macro")
 set(ae2f_Inc_ROOT "${PROJECT_SOURCE_DIR}/Inc" CACHE STRING "${PROJECT_SOURCE_DIR}/Inc")
 set(ae2f_FileRaw_ROOT "${PROJECT_SOURCE_DIR}/FileRaw" CACHE STRING "${PROJECT_SOURCE_DIR}/FileRaw")
@@ -55,6 +61,7 @@ execute_process(
 	${ae2f_PreProc_CSTD_PRM}
 	${ae2f_PreProc_C_PRM}
 	"-DCMAKE_BUILD_TYPE=Release"
+	${gen}
 	)
 
 execute_process(
