@@ -60,7 +60,10 @@ macro(ae2f_Inc_init prm_DIRLEN prm_PATHLEN prm_STACKLEN prm_INC_IGNORE_STACKSMAS
 	message("[ae2f_Inc_init] Succeed.")
 endmacro()
 
-function(ae2f_Inc_Run_One inp_file_absolute out_file_absolute)
+function(ae2f_Inc_Run_One inp_file_absolute_cmake out_file_absolute_cmake)
+	file(TO_NATIVE_PATH ${inp_file_absolute} inp_file_absolute_cmake)
+	file(TO_NATIVE_PATH ${out_file_absolute} out_file_absolute_cmake)
+
 	get_filename_component(dir "${inp_file_absolute}" DIRECTORY)
 
 	add_custom_command(

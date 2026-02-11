@@ -77,7 +77,10 @@ macro(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
 	message(STATUS "[ae2f_Macro_init] Succeed. ${ae2f_macro_last_exe}")
 endmacro()
 
-macro(ae2f_Macro_one prm_in prm_out)
+macro(ae2f_Macro_one prm_in_path_cmake prm_out_path_cmake)
+	file(TO_NATIVE_PATH	${prm_in_path_cmake} prm_in)
+	file(TO_NATIVE_PATH	${prm_out_path_cmake} prm_out)
+
 	message(STATUS "[ae2f::Macro::one] ${prm_in} ${prm_out}")
 
 	add_custom_command(
