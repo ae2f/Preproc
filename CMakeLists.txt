@@ -20,19 +20,19 @@ else()
 	set(gen "")
 endif()
 
-set(ae2f_Macro_ROOT "${PROJECT_SOURCE_DIR}/Macro" CACHE STRING "${PROJECT_SOURCE_DIR}/Macro")
-set(ae2f_Inc_ROOT "${PROJECT_SOURCE_DIR}/Inc" CACHE STRING "${PROJECT_SOURCE_DIR}/Inc")
-set(ae2f_FileRaw_ROOT "${PROJECT_SOURCE_DIR}/FileRaw" CACHE STRING "${PROJECT_SOURCE_DIR}/FileRaw")
-set(ae2f_Preproc_ROOT ${PROJECT_SOURCE_DIR} CACHE STRING "")
-set(ae2f_Preproc_BINROOT ${PROJECT_BINARY_DIR} CACHE STRING "")
+set(ae2f_Macro_ROOT "${PROJECT_SOURCE_DIR}/Macro/" CACHE STRING "${PROJECT_SOURCE_DIR}/Macro")
+set(ae2f_Inc_ROOT "${PROJECT_SOURCE_DIR}/Inc/" CACHE STRING "${PROJECT_SOURCE_DIR}/Inc")
+set(ae2f_FileRaw_ROOT "${PROJECT_SOURCE_DIR}/FileRaw/" CACHE STRING "${PROJECT_SOURCE_DIR}/FileRaw")
+set(ae2f_Preproc_ROOT ${PROJECT_SOURCE_DIR}/ CACHE STRING "")
+set(ae2f_Preproc_BINROOT ${PROJECT_BINARY_DIR}/ CACHE STRING "")
 
 option(ae2f_TEST "" ON)
 
 # Set this source directory as the tree root for project.
 set(ae2f_ProjRoot ${CMAKE_CURRENT_SOURCE_DIR} CACHE STRING "Tree root for project")
 set(ae2f_submod  .submod CACHE STRING "Relative path to submodule (subdirectory)")
-set(ae2f_CoreScript_Wh ${ae2f_ProjRoot}/${ae2f_submod}/ae2f/CoreScript)
-set(ae3f_easyredir_Wh ${ae2f_ProjRoot}/${ae2f_submod}/ae3f/easyredir)
+set(ae2f_CoreScript_Wh ${ae2f_ProjRoot}/${ae2f_submod}/ae2f/CoreScript/)
+set(ae3f_easyredir_Wh ${ae2f_ProjRoot}/${ae2f_submod}/ae3f/easyredir/)
 
 # Execute git to fetch CoreScript when repository does not exist
 if(NOT EXISTS ${ae2f_CoreScript_Wh})

@@ -79,7 +79,7 @@ function(ae2f_Inc_Run_One inp_file_absolute out_file_absolute)
 
 	add_custom_command(
 		OUTPUT			${out_file_absolute}.err
-		MAIN_DEPENDENCY		${inp_file_absolute}
+		MAIN_DEPENDENCY		${out_file_absolute}
 
 		COMMAND ${ae3f_easyredir_exe} ${inp_file_absolute} ${out_file_absolute}.err
 		${out_file_absolute}.err 0

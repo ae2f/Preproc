@@ -58,19 +58,25 @@ function(ae2f_FileRaw_Run_One inp_file_absolute out_file_absolute)
 		MAIN_DEPENDENCY	${inp_file_absolute}
 
 		COMMAND 
-		${ae3f_easyredir_exe}
-		${inp_file_absolute} ${out_file_absolute} ${out_file_absolute}.err 0
-		${ae2f_fileraw_last_exe}
+		"\"${ae3f_easyredir_exe}\""
+		"\"${inp_file_absolute}\"" 
+		"\"${out_file_absolute}\""
+		"\"${out_file_absolute}.err\"" 0
+		"\"${ae2f_fileraw_last_exe}\""
 		COMMENT "ae2f::FileRaw ${inp_file_absolute} ${out_file_absolute}"
 		VERBATIM
 		)
 
 	add_custom_command(
 		OUTPUT			${out_file_absolute}.err
-		MAIN_DEPENDENCY		${inp_file_absolute}
+		MAIN_DEPENDENCY		${out_file_absolute}
 
-		COMMAND ${ae3f_easyredir_exe} ${inp_file_absolute} ${out_file_absolute}.err
-		${out_file_absolute}.err 0
+		COMMAND 
+		"\"${ae3f_easyredir_exe}\"" 
+		\"${inp_file_absolute}\"
+		\"${out_file_absolute}.err\"
+		\"${out_file_absolute}.err\"
+		0
 		${CMAKE_COMMAND} --version
 		VERBATIM
 		)
@@ -84,10 +90,13 @@ function(ae2f_FileRaw_Run_One2 inp_file_absolute out_file_absolute keygen)
 		MAIN_DEPENDENCY	${inp_file_absolute}
 
 		COMMAND 
-		${ae3f_easyredir_exe}
-		${inp_file_absolute} ${out_file_absolute} ${out_file_absolute}.err 0
-		${ae2f_fileraw_last_exe}
-		${keygen}
+		\"${ae3f_easyredir_exe}\"
+		\"${inp_file_absolute}\" 
+		\"${out_file_absolute}\" 
+		\"${out_file_absolute}.err\" 
+		0
+		\"${ae2f_fileraw_last_exe}\"
+		\"${keygen}\"
 
 		COMMENT "ae2f::FileRaw2 ${inp_file_absolute} ${out_file_absolute}"
 		VERBATIM
@@ -95,10 +104,13 @@ function(ae2f_FileRaw_Run_One2 inp_file_absolute out_file_absolute keygen)
 
 	add_custom_command(
 		OUTPUT			${out_file_absolute}.err
-		MAIN_DEPENDENCY		${inp_file_absolute}
+		MAIN_DEPENDENCY		${out_file_absolute}
 
-		COMMAND ${ae3f_easyredir_exe} ${inp_file_absolute} ${out_file_absolute}.err
-		${out_file_absolute}.err 0
+		COMMAND 
+		\"${ae3f_easyredir_exe}\" 
+		\"${inp_file_absolute}\" 
+		\"${out_file_absolute}.err\"
+		\"${out_file_absolute}.err\" 0
 		${CMAKE_COMMAND} --version
 		VERBATIM
 		)

@@ -77,7 +77,10 @@ macro(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
 	message(STATUS "[ae2f_Macro_init] Succeed. ${ae2f_macro_last_exe}")
 endmacro()
 
-macro(ae2f_Macro_one prm_in prm_out)
+macro(ae2f_Macro_one _prm_in _prm_out)
+	file(TO_NATIVE_PATH ${_prm_in} prm_in)
+	file(TO_NATIVE_PATH ${_prm_out} prm_out)
+
 	message(STATUS "[ae2f::Macro::one] ${prm_in} ${prm_out}")
 
 	add_custom_command(
@@ -95,7 +98,7 @@ macro(ae2f_Macro_one prm_in prm_out)
 
 	add_custom_command(
 		OUTPUT		${prm_out}.err
-		MAIN_DEPENDENCY	${prm_in}
+		MAIN_DEPENDENCY	${prm_out}
 		VERBATIM
 		COMMAND	${ae3f_easyredir_exe} ${prm_in} ${prm_out}.err ${prm_out}.err 0
 		${CMAKE_COMMAND} --version
