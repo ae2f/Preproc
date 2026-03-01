@@ -88,9 +88,11 @@ macro(ae2f_Macro_one prm_in_path_cmake prm_out_path_cmake)
 		MAIN_DEPENDENCY	${prm_in}
 
 		COMMAND 
-		${ae3f_easyredir_exe}
-		${prm_in} ${prm_out} ${prm_out}.err 0
-		${ae2f_macro_last_exe}
+		"${ae3f_easyredir_exe}"
+		"${prm_in}" 
+		"${prm_out}" 
+		"${prm_out}.err" 0
+		"${ae2f_macro_last_exe}"
 
 		COMMENT "ae2f::Macro ${prm_in} ${prm_out}"
 		VERBATIM
@@ -100,8 +102,9 @@ macro(ae2f_Macro_one prm_in_path_cmake prm_out_path_cmake)
 		OUTPUT		${prm_out}.err
 		MAIN_DEPENDENCY	${prm_out}
 		VERBATIM
-		COMMAND	${ae3f_easyredir_exe} ${prm_in} ${prm_out}.err ${prm_out}.err 0
-		${CMAKE_COMMAND} --version
+		COMMAND	"${ae3f_easyredir_exe}"
+		"${prm_in}" "${prm_out}.err" "${prm_out}.err" 0
+		"${CMAKE_COMMAND}" --version
 		)
 endmacro()
 

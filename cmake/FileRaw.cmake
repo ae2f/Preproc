@@ -47,7 +47,7 @@ macro(ae2f_FileRaw_init prm_STRGEN prm_BINGEN_BUFFSZ)
 	endif()
 
 	file(GLOB_RECURSE ae2f_fileraw_last_exe ${ae2f_Preproc_BINROOT}/util/FileRaw/A${prm_STRGEN}/bin/**)
-	message(STATUS "[ae2f::FileRaw::init] Succeed.")
+	message(STATUS "[ae2f::FileRaw::init] ${ae2f_fileraw_last_exe}")
 endmacro()
 
 
@@ -61,11 +61,11 @@ function(ae2f_FileRaw_Run_One inp_file_absolute_cmake out_file_absolute_cmake)
 		MAIN_DEPENDENCY	${inp_file_absolute}
 
 		COMMAND 
-		"\"${ae3f_easyredir_exe}\""
-		"\"${inp_file_absolute}\"" 
-		"\"${out_file_absolute}\""
-		"\"${out_file_absolute}.err\"" 0
-		"\"${ae2f_fileraw_last_exe}\""
+		"${ae3f_easyredir_exe}"
+		"${inp_file_absolute}"
+		"${out_file_absolute}"
+		"${out_file_absolute}.err" 0
+		"${ae2f_fileraw_last_exe}"
 		COMMENT "ae2f::FileRaw ${inp_file_absolute} ${out_file_absolute}"
 		VERBATIM
 		)
@@ -75,12 +75,12 @@ function(ae2f_FileRaw_Run_One inp_file_absolute_cmake out_file_absolute_cmake)
 		MAIN_DEPENDENCY		${out_file_absolute}
 
 		COMMAND 
-		"\"${ae3f_easyredir_exe}\"" 
-		\"${inp_file_absolute}\"
-		\"${out_file_absolute}.err\"
-		\"${out_file_absolute}.err\"
+		"${ae3f_easyredir_exe}"
+		"${inp_file_absolute}"
+		"${out_file_absolute}.err"
+		"${out_file_absolute}.err"
 		0
-		${CMAKE_COMMAND} --version
+		"${CMAKE_COMMAND}" --version
 		VERBATIM
 		)
 
@@ -96,13 +96,13 @@ function(ae2f_FileRaw_Run_One2 inp_file_absolute out_file_absolute keygen)
 		MAIN_DEPENDENCY	${inp_file_absolute}
 
 		COMMAND 
-		\"${ae3f_easyredir_exe}\"
-		\"${inp_file_absolute}\" 
-		\"${out_file_absolute}\" 
-		\"${out_file_absolute}.err\" 
+		"${ae3f_easyredir_exe}"
+		"${inp_file_absolute}" 
+		"${out_file_absolute}" 
+		"${out_file_absolute}.err" 
 		0
-		\"${ae2f_fileraw_last_exe}\"
-		\"${keygen}\"
+		"${ae2f_fileraw_last_exe}"
+		${keygen}
 
 		COMMENT "ae2f::FileRaw2 ${inp_file_absolute} ${out_file_absolute}"
 		VERBATIM
@@ -113,11 +113,11 @@ function(ae2f_FileRaw_Run_One2 inp_file_absolute out_file_absolute keygen)
 		MAIN_DEPENDENCY		${out_file_absolute}
 
 		COMMAND 
-		\"${ae3f_easyredir_exe}\" 
-		\"${inp_file_absolute}\" 
-		\"${out_file_absolute}.err\"
-		\"${out_file_absolute}.err\" 0
-		${CMAKE_COMMAND} --version
+		"${ae3f_easyredir_exe}"
+		"${inp_file_absolute}"
+		"${out_file_absolute}.err"
+		"${out_file_absolute}.err" 0
+		"${CMAKE_COMMAND}" --version
 		VERBATIM
 		)
 endfunction()
