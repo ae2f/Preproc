@@ -65,7 +65,14 @@ int main(void) {
 		unsigned m_space_found : 1;
 		unsigned m_first : 1;
 		unsigned m_is_fn_arg : 1;
-	} prmbool = {0, 0, 0, 0 };
+		unsigned m_is_bypassing_arg : 1;
+	} prmbool = {
+		0, 
+		0, 
+		0, 
+		0, 
+		0 
+	};
 
 
 	puts("#undef\t__ae2f_MACRO_GENERATED\n"
@@ -161,7 +168,7 @@ __START:
 						 }
 
 caseblanks:
-						 break;
+					break;
 				}
 			} /** tparam */
 
@@ -171,9 +178,15 @@ TPARAMED:
 					case EOF:
 						return 1;
 					default:
+						if (c == '{') {
+							prmbool.m_is_bypassing_arg = 1;
+							c = '(';
+						}
+
 						l = fputc(c, stdout);
 						if (l < 0)
 							return STATE_OUTFAILED;
+
 						if (c == '(')
 							goto FNED;
 caseblanks:
@@ -195,6 +208,12 @@ FNED:
 			prm_first = 1;
 			stack = 0;
 			prmbool.m_is_fn_arg = 0;
+
+			if(prmbool.m_is_bypassing_arg) {
+				c = ')';
+				fputs("/*", stdout);
+				goto LBL_BYPASS_SCOPE;
+			}
 
 			while (1) {
 
@@ -255,6 +274,7 @@ PRM_CASE_BLANK:
 					case ',':
 						prmbool.m_is_fn_arg = 0;
 					case ')':
+LBL_BYPASS_SCOPE:
 						if(c == ')' && stack--) {
 							break;
 						}
@@ -295,6 +315,11 @@ PRM_CASE_BLANK:
 PRMED:
 
 			stack = 0;
+			if(prmbool.m_is_bypassing_arg) {
+				prmbool.m_is_bypassing_arg = 0;
+				c = '{';
+				goto LBL_UP_STACK;
+			}
 
 			while (1) {
 				switch (c = fgetc(stdin)) {
@@ -318,6 +343,7 @@ casenewlines:
 						break;
 
 					case '{':
+LBL_UP_STACK:
 						if (!(++stack)) {
 							return STATE_OVERRUN;
 						}
