@@ -83,6 +83,10 @@ macro(ae2f_Macro_one prm_in_path_cmake prm_out_path_cmake)
 
 	message(STATUS "[ae2f::Macro::one] ${prm_in} ${prm_out}")
 
+
+	get_filename_component(out_dir "${prm_out}" DIRECTORY)
+	file(MAKE_DIRECTORY ${out_dir})
+
 	add_custom_command(
 		OUTPUT		${prm_out}
 		MAIN_DEPENDENCY	${prm_in}
@@ -146,6 +150,61 @@ macro(ae2f_Macro_Lib_V prm_namespace prm_name prm_prefix
 		${prm_namespace} ${prm_config_file}
 		${ARGN} ${files-src} ${ofiles-inc} ${orig-inc}
 		)
+endmacro()
+
+macro(ae2f_Macro_Lib_V2_REL
+		prm_namespace prm_name prm_prefix 
+		prm_src_dir	prm_src_glob
+		prm_inc_dir	prm_inc_glob
+		prm_inc_out_dir_rel	prm_inc_out_ext
+
+		prm_config_file	prm_include_dir
+
+		prm_guard)
+
+	set(OUTDIRROOT_ "util/MacroREL/${prm_namespace}/${prm_name}")
+	set(OUTDIRROOT "${ae2f_Preproc_BINROOT}/${OUTDIRROOT_}")
+
+	ae2f_Macro_Lib_V(
+		${prm_namespace}	${prm_name} ${prm_prefix} 
+		${prm_src_dir}		${prm_src_glob}
+		${prm_inc_dir}		${prm_inc_glob}
+		${OUTDIRROOT}/${prm_inc_out_dir_rel}		
+		${prm_inc_out_ext}
+
+		${prm_config_file}	${prm_include_dir}
+		${ARGN}
+		)
+
+
+	if(NOT "${prm_prefix}" STREQUAL "INTERFACE")
+		target_include_directories(
+			${prm_namespace}-${prm_name} PUBLIC
+			$<BUILD_INTERFACE:${OUTDIRROOT}/${prm_include_dir}/>  
+			$<INSTALL_INTERFACE:${OUTDIRROOT_}/${prm_include_dir}/>
+			)
+	endif()
+
+	target_include_directories(
+		${prm_namespace}-${prm_name} INTERFACE
+		$<BUILD_INTERFACE:${OUTDIRROOT}/${prm_include_dir}/>  
+		$<INSTALL_INTERFACE:${OUTDIRROOT_}/${prm_include_dir}/>
+		)
+
+	if(NOT ${prm_guard})
+		file(GLOB_RECURSE files-inc "${prm_inc_dir}/${prm_inc_glob}")
+
+		add_executable(
+			dvl-${prm_namespace}-${prm_name}
+			${ae2f_Preproc_ROOT}/cmake/dummymain.c
+			${files-inc}
+			)
+
+		target_link_libraries(
+			dvl-${prm_namespace}-${prm_name}
+			PUBLIC ${prm_namespace}::${prm_name}
+			)
+	endif()
 endmacro()
 
 macro(ae2f_Macro_Lib_V2 

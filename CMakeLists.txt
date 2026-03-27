@@ -79,10 +79,8 @@ if(NOT TARGET ae2f::CoreScript)
 endif()
 
 if(NOT TARGET ae2f::Preproc)
-	configure_file(${PROJECT_SOURCE_DIR}/Macro.h.in ${PROJECT_SOURCE_DIR}/inc/ae2f/Macro.h)
 	ae2f_CoreLibTentConfigCustom(
 		Preproc INTERFACE inc ae2f config/Macro.cmake.in
-		"inc/ae2f/Macro.h" 
 		)
 endif()
 
