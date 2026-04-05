@@ -15,6 +15,8 @@ macro(ae2f_FileRaw_init prm_STRGEN prm_BINGEN_BUFFSZ)
 
 	if(DEFINED ae2f_PreProc_CMAKE_GENERATOR)
 		set(gen "-G${ae2f_PreProc_CMAKE_GENERATOR}")
+	elseif(DEFINED CMAKE_GENERATOR)
+		set(gen "-G${CMAKE_GENERATOR}")
 	else()
 		set(gen "")
 	endif()

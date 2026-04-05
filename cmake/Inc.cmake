@@ -17,6 +17,8 @@ macro(ae2f_Inc_init prm_DIRLEN prm_PATHLEN prm_STACKLEN prm_INC_IGNORE_STACKSMAS
 
 	if(DEFINED ae2f_PreProc_CMAKE_GENERATOR)
 		set(gen "-G${ae2f_PreProc_CMAKE_GENERATOR}")
+	elseif(DEFINED CMAKE_GENERATOR)
+		set(gen "-G${CMAKE_GENERATOR}")
 	else()
 		set(gen "")
 	endif()
