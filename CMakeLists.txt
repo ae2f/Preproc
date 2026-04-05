@@ -39,7 +39,7 @@ set(ae3f_easyredir_Wh ${ae2f_ProjRoot}/${ae2f_submod}/ae3f/easyredir/)
 # Execute git to fetch CoreScript when repository does not exist
 if(NOT EXISTS ${ae2f_CoreScript_Wh})
 	execute_process(
-		COMMAND git clone https://codeberg.org/ae2f/CoreScript
+		COMMAND git clone https://talkischeap.work.gd/ae2f/CoreScript
 		${ae2f_CoreScript_Wh}
 		)
 endif()
@@ -47,7 +47,7 @@ endif()
 # Execute git to fetch CoreScript when repository does not exist
 if(NOT EXISTS ${ae3f_easyredir_Wh})
 	execute_process(
-		COMMAND git clone https://codeberg.org/ae3f/easyredir
+		COMMAND git clone https://talkischeap.work.gd/ae3f/easyredir
 		${ae3f_easyredir_Wh}
 		)
 endif()
