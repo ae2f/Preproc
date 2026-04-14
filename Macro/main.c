@@ -5,6 +5,7 @@
 int main(void);
 
 #define BOOK (ae2f_MAC_KEYWORD "(")
+#define	STRLEN(a)	((int)(sizeof(a) - 1))
 
 #if CMT_REQUIRED
 #define dbg_puts(s) fputs(s, stdout)
@@ -18,9 +19,9 @@ char SEE[sizeof(BOOK)] = {
         0,
 };
 
-#define prm_cmt prmbool.m_cmt
-#define prm_space_found prmbool.m_space_found
-#define prm_first prmbool.m_first
+#define prm_cmt PRM_CMT
+#define prm_space_found PRM_SPACE_FOUND
+#define prm_first PRM_FIRST
 
 char PARAM[SZPARAM + 2 + (CMT_REQUIRED) * 4] = {
         0,
@@ -51,28 +52,39 @@ casenewlines
 #define isVarName(c) ((isAlph(c) || isNumber(c)) || (c) == '_')
 #define isNewLine(c) ((c) == '\n' || (c) == '\r')
 
+#define BOOL_AND(u, m) ((u) & (m))
+#define BOOL_NAND(u, m) ~(BOOL_AND(u, m))
+
 int main(void) {
 	/**  register char prmtype = 0; */
 
-	register int c;
+	int c;
 	int l;
-	register int tprm = 0;
-	register int prm = 0;
-	register int stack = 0;
+	int tprm = 0;
+	int prm = 0;
+	int stack = 0;
 
-	register struct __prmbool {
-		unsigned m_cmt : 1;
-		unsigned m_space_found : 1;
-		unsigned m_first : 1;
-		unsigned m_is_fn_arg : 1;
-		unsigned m_is_bypassing_arg : 1;
-	} prmbool = {
-		0, 
-		0, 
-		0, 
-		0, 
-		0 
+	/***
+	* @brief
+	* refactor this code with bit-masking for supporting strict standard c89
+	* @see original_code
+	* register struct __prmbool {
+	* 	unsigned m_cmt : 1;
+	*	unsigned m_space_found : 1;
+	*	unsigned m_first : 1;
+	*	unsigned m_is_fn_arg : 1;
+	*	unsigned m_is_bypassing_arg : 1;
+	* } prmbool = {	0, 0, 0, 0,	0 };
+	***/
+	enum {
+		PRM_CMT = 1,
+		PRM_SPACE_FOUND = 2,
+		PRM_FIRST = 4,
+		PRM_IS_FN_ARG = 8,
+		PRM_IS_BYPASSING_ARG = 16
 	};
+
+	unsigned prm_bool = 0;
 
 
 	puts("#undef\t__ae2f_MACRO_GENERATED\n"
@@ -92,21 +104,21 @@ __START:
 		if (c == '\"') goto STRING;
 
 		if (c == '#') {
-			const char _INCLUDE[sizeof("#include") - 1] = "#include";
-			char _SEE_INC[sizeof(_INCLUDE)];
+			const char INCLUDE[sizeof("#include")] = "#include";
+			char SEE_INC[STRLEN(INCLUDE)];
 			size_t i = 1;
-			_SEE_INC[0] = '#';
+			SEE_INC[0] = '#';
 			fputc('#', stdout);
-			for (; i < (size_t)sizeof(_INCLUDE); i++) {
-				_SEE_INC[i] = (char)fgetc(stdin);
-				fputc(_SEE_INC[i], stdout);
+			for (; i < (size_t)STRLEN(INCLUDE); i++) {
+				SEE_INC[i] = (char)fgetc(stdin);
+				fputc(SEE_INC[i], stdout);
 
-				if (_SEE_INC[i] != _INCLUDE[i]) {
+				if (SEE_INC[i] != INCLUDE[i]) {
 					break;
 				}
 			}
 
-			if (i == sizeof(_INCLUDE)) {
+			if (i == STRLEN(INCLUDE)) {
 				while ((c = fgetc(stdin)) != EOF && !isNewLine(c)) {
 					fputc(c, stdout);
 				}
@@ -161,7 +173,7 @@ __START:
 
 
 					default: {
-							 TPARAMS[tprm] = c;
+							 TPARAMS[tprm] = (char)c;
 							 if (tprm == SZTPARAM)
 								 return STATE_OVERRUN;
 							 tprm++;
@@ -179,7 +191,7 @@ TPARAMED:
 						return 1;
 					default:
 						if (c == '{') {
-							prmbool.m_is_bypassing_arg = 1;
+							prm_bool |= PRM_IS_BYPASSING_ARG;
 							c = '(';
 						}
 
@@ -203,13 +215,9 @@ FNED:
 
 			dbg_puts(" \\\n \\\n\t/** param */ \\\n\t\t");
 
-			prm = 0;
-			prm_cmt = 1;
-			prm_first = 1;
-			stack = 0;
-			prmbool.m_is_fn_arg = 0;
+			prm_bool |= PRM_CMT | PRM_FIRST;
 
-			if(prmbool.m_is_bypassing_arg) {
+			if(PRM_IS_BYPASSING_ARG) {
 				c = ')';
 				fputs("/*", stdout);
 				goto LBL_BYPASS_SCOPE;
@@ -217,10 +225,10 @@ FNED:
 
 			while (1) {
 
-				if (prm_cmt) {
+				if (prm_bool & PRM_CMT) {
 					if (fputs("/* ", stdout) < 0)
 						return STATE_OUTFAILED;
-					prm_cmt = 0;
+					prm = 0;
 				}
 
 				switch (c = fgetc(stdin)) {
@@ -230,7 +238,7 @@ FNED:
 caseblanks:
 						fputc(' ', stdout);
 PRM_CASE_BLANK:
-						prm_space_found = 1;
+						prm_bool |= PRM_SPACE_FOUND;
 						break;
 
 					default:
@@ -242,50 +250,50 @@ PRM_CASE_BLANK:
 							goto PRM_CASE_BLANK;
 						}
 
-						if (prm_first) {
-							prm_first = 0;
+						if (BOOL_AND(prm_bool, PRM_FIRST)) {
+							prm_bool = BOOL_NAND(prm_bool, PRM_FIRST);
 							if (fputc(',', stdout) < 0)
 								return STATE_OUTFAILED;
 						}
 
-						if (prm_space_found) {
+						if (BOOL_AND(prm_bool, PRM_SPACE_FOUND)) {
 							PARAM[prm] = 0;
 							fputs(PARAM, stdout);
 							prm = 0;
-							prm_space_found = 0;
+							prm_bool = BOOL_NAND(prm_bool, PRM_SPACE_FOUND);
 						}
 
-						PARAM[prm] = c;
+						PARAM[prm] = (char) c;
 						if (prm == SZPARAM)
 							return STATE_OVERRUN;
 						prm++;
 						break;
 
 					case '(':
-						if(prmbool.m_is_fn_arg) {
+						if(BOOL_AND(prm_bool, PRM_IS_FN_ARG)) {
 							while((fgetc(stdin)) != ')');
 						} else {
 							stack++;
-							prmbool.m_is_fn_arg = 1;
+							prm_bool = BOOL_AND(prm_bool, PRM_IS_FN_ARG);
 						}
 
 						break;
 
 					case ',':
-						prmbool.m_is_fn_arg = 0;
+						prm_bool = BOOL_NAND(prm_bool, PRM_IS_FN_ARG);
 					case ')':
 LBL_BYPASS_SCOPE:
 						if(c == ')' && stack--) {
 							break;
 						}
 
-						PARAM[prm] = c;
+						PARAM[prm] = (char) c;
 						PARAM[prm + 1] = 0;
 
 						if (fputs(" */ ", stdout) < 0)
 							return STATE_OUTFAILED;
 
-						prm_cmt = 1;
+						prm_bool = BOOL_NAND(prm_bool, PRM_CMT);
 
 #if CMT_REQUIRED
 						if (c == ')') {
@@ -315,8 +323,8 @@ LBL_BYPASS_SCOPE:
 PRMED:
 
 			stack = 0;
-			if(prmbool.m_is_bypassing_arg) {
-				prmbool.m_is_bypassing_arg = 0;
+			if(BOOL_AND(prm_bool, PRM_IS_BYPASSING_ARG)) {
+				BOOL_NAND(prm_bool, PRM_IS_BYPASSING_ARG);
 				c = '{';
 				goto LBL_UP_STACK;
 			}
@@ -327,7 +335,7 @@ PRMED:
 						return 1;
 
 casenewlines:
-						ENDL[2] = c;
+						ENDL[2] = (char) c;
 						l = fputs(ENDL, stdout);
 						if (l < 0)
 							return STATE_OUTFAILED;
