@@ -54,6 +54,7 @@ casenewlines
 
 #define BOOL_AND(u, m) ((u) & (m))
 #define BOOL_NAND(u, m) ~(BOOL_AND(u, m))
+#define BOOL_OR(u, m) ((u) | (m))
 
 int main(void) {
 	/**  register char prmtype = 0; */
@@ -214,10 +215,12 @@ FNED:
 				return STATE_OUTFAILED;
 
 			dbg_puts(" \\\n \\\n\t/** param */ \\\n\t\t");
-
+			prm = 0;
 			prm_bool |= PRM_CMT | PRM_FIRST;
+			stack = 0;
+			prm_bool = BOOL_NAND(prm_bool, PRM_IS_FN_ARG);
 
-			if(PRM_IS_BYPASSING_ARG) {
+			if(BOOL_AND(prm_bool, PRM_IS_BYPASSING_ARG)) {
 				c = ')';
 				fputs("/*", stdout);
 				goto LBL_BYPASS_SCOPE;
@@ -225,10 +228,10 @@ FNED:
 
 			while (1) {
 
-				if (prm_bool & PRM_CMT) {
+				if (BOOL_AND(prm_bool, PRM_CMT)) {
 					if (fputs("/* ", stdout) < 0)
 						return STATE_OUTFAILED;
-					prm = 0;
+					prm_bool = BOOL_NAND(prm_bool, PRM_CMT);
 				}
 
 				switch (c = fgetc(stdin)) {
@@ -274,7 +277,7 @@ PRM_CASE_BLANK:
 							while((fgetc(stdin)) != ')');
 						} else {
 							stack++;
-							prm_bool = BOOL_AND(prm_bool, PRM_IS_FN_ARG);
+							prm_bool |= PRM_IS_FN_ARG;
 						}
 
 						break;
@@ -293,7 +296,7 @@ LBL_BYPASS_SCOPE:
 						if (fputs(" */ ", stdout) < 0)
 							return STATE_OUTFAILED;
 
-						prm_bool = BOOL_NAND(prm_bool, PRM_CMT);
+						prm_bool |= PRM_CMT;
 
 #if CMT_REQUIRED
 						if (c == ')') {
@@ -324,7 +327,7 @@ PRMED:
 
 			stack = 0;
 			if(BOOL_AND(prm_bool, PRM_IS_BYPASSING_ARG)) {
-				BOOL_NAND(prm_bool, PRM_IS_BYPASSING_ARG);
+				prm_bool = BOOL_NAND(prm_bool, PRM_IS_BYPASSING_ARG);
 				c = '{';
 				goto LBL_UP_STACK;
 			}
