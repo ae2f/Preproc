@@ -18,6 +18,8 @@ macro(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
 
 	if(DEFINED ae2f_PreProc_CMAKE_GENERATOR)
 		set(gen "-G${ae2f_PreProc_CMAKE_GENERATOR}")
+	elseif(DEFINED CMAKE_GENERATOR)
+		set(gen "-G${CMAKE_GENERATOR}")
 	else()
 		set(gen "")
 	endif()
