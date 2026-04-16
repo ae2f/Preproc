@@ -53,7 +53,7 @@ casenewlines
 #define isNewLine(c) ((c) == '\n' || (c) == '\r')
 
 #define BOOL_AND(u, m) ((u) & (m))
-#define BOOL_NAND(u, m) ~(BOOL_AND(u, m))
+#define BOOL_NAND(u, m) !(BOOL_AND(u, m))
 #define BOOL_OR(u, m) ((u) | (m))
 
 int main(void) {
