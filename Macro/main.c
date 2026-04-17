@@ -19,10 +19,6 @@ char SEE[sizeof(BOOK)] = {
         0,
 };
 
-#define prm_cmt PRM_CMT
-#define prm_space_found PRM_SPACE_FOUND
-#define prm_first PRM_FIRST
-
 char PARAM[SZPARAM + 2 + (CMT_REQUIRED) * 4] = {
         0,
 };
@@ -65,18 +61,6 @@ int main(void) {
 	int prm = 0;
 	int stack = 0;
 
-	/***
-	* @brief
-	* refactor this code with bit-masking for supporting strict standard c89
-	* @see original_code
-	* register struct __prmbool {
-	* 	unsigned m_cmt : 1;
-	*	unsigned m_space_found : 1;
-	*	unsigned m_first : 1;
-	*	unsigned m_is_fn_arg : 1;
-	*	unsigned m_is_bypassing_arg : 1;
-	* } prmbool = {	0, 0, 0, 0,	0 };
-	***/
 	enum {
 		PRM_CMT = 1,
 		PRM_SPACE_FOUND = 2,
