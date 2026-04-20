@@ -268,6 +268,7 @@ PRM_CASE_BLANK:
 
 					case ',':
 						prm_bool = SET_ZERO(prm_bool, PRM_IS_FN_ARG);
+						goto LBL_BYPASS_SCOPE;
 						break;
 					case ')':
 LBL_BYPASS_SCOPE:
@@ -332,8 +333,10 @@ casenewlines:
 
 					case '$':
 						c = '#';
+						goto FALL_PRMED_DEFUALT;
 						break;
 					default:
+FALL_PRMED_DEFUALT:
 						l = fputc(c, stdout);
 						if (l < 0)
 							return STATE_OUTFAILED;
@@ -386,8 +389,10 @@ STRING:
 			case '\\':
 				fputc(c, stdout);
 				c = fgetc(stdin);
+				goto FALL_STRING_DEFUALT;
 				break;
 			default:
+FALL_STRING_DEFUALT:
 				fputc(c, stdout);
 				break;
 		}
