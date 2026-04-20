@@ -390,7 +390,6 @@ STRING:
 				fputc(c, stdout);
 				c = fgetc(stdin);
 				goto FALL_STRING_DEFUALT;
-				break;
 			default:
 FALL_STRING_DEFUALT:
 				fputc(c, stdout);
