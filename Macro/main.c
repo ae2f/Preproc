@@ -48,10 +48,10 @@ casenewlines
 #define isVarName(c) ((isAlph(c) || isNumber(c)) || (c) == '_')
 #define isNewLine(c) ((c) == '\n' || (c) == '\r')
 
-#define BOOL_AND(u, m) ((u) & (m))
-#define SET_ZERO(u, m) ((u) & ~((unsigned)m))
-#define BOOL_OR(u, m) ((u) | (m))
+#define isTrue(u, m) ((u) & (m))
+#define setTrue(u, m) ((u) | (m))
 
+#define setFalse(u, m) ((u) & ~((unsigned)m))
 int main(void) {
 	/**  register char prmtype = 0; */
 
@@ -176,7 +176,7 @@ TPARAMED:
 						return 1;
 					default:
 						if (c == '{') {
-							prm_bool |= PRM_IS_BYPASSING_ARG;
+							prm_bool = setTrue(prm_bool, PRM_IS_BYPASSING_ARG);
 							c = '(';
 						}
 
@@ -202,9 +202,9 @@ FNED:
 			prm = 0;
 			prm_bool |= PRM_CMT | PRM_FIRST;
 			stack = 0;
-			prm_bool = SET_ZERO(prm_bool, PRM_IS_FN_ARG);
+			prm_bool = setFalse(prm_bool, PRM_IS_FN_ARG);
 
-			if(BOOL_AND(prm_bool, PRM_IS_BYPASSING_ARG)) {
+			if(isTrue(prm_bool, PRM_IS_BYPASSING_ARG)) {
 				c = ')';
 				fputs("/*", stdout);
 				goto LBL_BYPASS_SCOPE;
@@ -212,10 +212,10 @@ FNED:
 
 			while (1) {
 
-				if (BOOL_AND(prm_bool, PRM_CMT)) {
+				if (isTrue(prm_bool, PRM_CMT)) {
 					if (fputs("/* ", stdout) < 0)
 						return STATE_OUTFAILED;
-					prm_bool = SET_ZERO(prm_bool, PRM_CMT);
+					prm_bool = setFalse(prm_bool, PRM_CMT);
 				}
 
 				switch (c = fgetc(stdin)) {
@@ -225,7 +225,7 @@ FNED:
 caseblanks:
 						fputc(' ', stdout);
 PRM_CASE_BLANK:
-						prm_bool |= PRM_SPACE_FOUND;
+						prm_bool = setTrue(prm_bool, PRM_SPACE_FOUND);
 						break;
 
 					default:
@@ -237,17 +237,17 @@ PRM_CASE_BLANK:
 							goto PRM_CASE_BLANK;
 						}
 
-						if (BOOL_AND(prm_bool, PRM_FIRST)) {
-							prm_bool = SET_ZERO(prm_bool, PRM_FIRST);
+						if (isTrue(prm_bool, PRM_FIRST)) {
+							prm_bool = setFalse(prm_bool, PRM_FIRST);
 							if (fputc(',', stdout) < 0)
 								return STATE_OUTFAILED;
 						}
 
-						if (BOOL_AND(prm_bool, PRM_SPACE_FOUND)) {
+						if (isTrue(prm_bool, PRM_SPACE_FOUND)) {
 							PARAM[prm] = 0;
 							fputs(PARAM, stdout);
 							prm = 0;
-							prm_bool = SET_ZERO(prm_bool, PRM_SPACE_FOUND);
+							prm_bool = setFalse(prm_bool, PRM_SPACE_FOUND);
 						}
 
 						PARAM[prm] = (char) c;
@@ -257,18 +257,18 @@ PRM_CASE_BLANK:
 						break;
 
 					case '(':
-						if(BOOL_AND(prm_bool, PRM_IS_FN_ARG)) {
+						if(isTrue(prm_bool, PRM_IS_FN_ARG)) {
 							while((fgetc(stdin)) != ')');
 						} else {
 							stack++;
-							prm_bool |= PRM_IS_FN_ARG;
+							prm_bool = setTrue(prm_bool, PRM_IS_FN_ARG);
 						}
 
 						break;
 
 					case ',':
-						prm_bool = SET_ZERO(prm_bool, PRM_IS_FN_ARG);
-						goto LBL_BYPASS_SCOPE;
+						prm_bool = setFalse(prm_bool, PRM_IS_FN_ARG);
+					//	goto LBL_BYPASS_SCOPE; this may not need....?
 						break;
 					case ')':
 LBL_BYPASS_SCOPE:
@@ -282,7 +282,7 @@ LBL_BYPASS_SCOPE:
 						if (fputs(" */ ", stdout) < 0)
 							return STATE_OUTFAILED;
 
-						prm_bool |= PRM_CMT;
+						prm_bool = setTrue(prm_bool,PRM_CMT);
 
 #if CMT_REQUIRED
 						if (c == ')') {
@@ -312,8 +312,8 @@ LBL_BYPASS_SCOPE:
 PRMED:
 
 			stack = 0;
-			if(BOOL_AND(prm_bool, PRM_IS_BYPASSING_ARG)) {
-				prm_bool = SET_ZERO(prm_bool, PRM_IS_BYPASSING_ARG);
+			if(isTrue(prm_bool, PRM_IS_BYPASSING_ARG)) {
+				prm_bool = setFalse(prm_bool, PRM_IS_BYPASSING_ARG);
 				c = '{';
 				goto LBL_UP_STACK;
 			}
