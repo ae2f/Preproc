@@ -49,6 +49,9 @@ macro(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
 			${ae2f_PreProc_C_PRM}
 			${gen} ${cstd} ${cc}
 			${ARGN}
+			-Dae2f_submod=${ae2f_submod}
+			-Dae2f_ProjRoot=${ae2f_ProjRoot}
+			-Dae2f_BinRoot=${ae2f_BinRoot}
 			RESULT_VARIABLE ConfOut
 			)
 
