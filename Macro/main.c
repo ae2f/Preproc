@@ -162,8 +162,7 @@ __START:
 							 if (tprm == SZTPARAM)
 								 return STATE_OVERRUN;
 							 tprm++;
-						 }
-
+						 } break;
 caseblanks:
 					break;
 				}
@@ -186,6 +185,7 @@ TPARAMED:
 
 						if (c == '(')
 							goto FNED;
+						break;
 caseblanks:
 						break;
 				}
@@ -268,8 +268,7 @@ PRM_CASE_BLANK:
 
 					case ',':
 						prm_bool = setFalse(prm_bool, PRM_IS_FN_ARG);
-					//	goto LBL_BYPASS_SCOPE; this may not need....?
-						break;
+						goto LBL_BYPASS_SCOPE;
 					case ')':
 LBL_BYPASS_SCOPE:
 						if(c == ')' && stack--) {
