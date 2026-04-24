@@ -164,6 +164,9 @@ __START:
 							 tprm++;
 						 }
 
+						 goto CBLANK_0;
+
+CBLANK_0:
 caseblanks:
 					break;
 				}
@@ -186,6 +189,8 @@ TPARAMED:
 
 						if (c == '(')
 							goto FNED;
+						goto CBLANK_1;
+CBLANK_1:
 caseblanks:
 						break;
 				}
@@ -268,6 +273,7 @@ PRM_CASE_BLANK:
 
 					case ',':
 						prm_bool = SET_ZERO(prm_bool, PRM_IS_FN_ARG);
+						goto LBL_BYPASS_SCOPE;
 					case ')':
 LBL_BYPASS_SCOPE:
 						if(c == ')' && stack--) {
@@ -331,7 +337,9 @@ casenewlines:
 
 					case '$':
 						c = '#';
+						goto LBL_CASENEWLINE_DEFAULT;
 					default:
+LBL_CASENEWLINE_DEFAULT:
 						l = fputc(c, stdout);
 						if (l < 0)
 							return STATE_OUTFAILED;
@@ -383,7 +391,9 @@ STRING:
 
 			case '\\':
 				fputc(c, stdout);
-				c = fgetc(stdin);
+				if((c = fgetc(stdin)) == EOF) break;
+				fputc(c, stdout);
+				break;
 
 			default:
 				fputc(c, stdout);
