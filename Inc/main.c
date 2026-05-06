@@ -1,4 +1,4 @@
-#include "./.main.h"
+#include <.main.h>
 
 #if NDEBUG
 #define DEBUG	0

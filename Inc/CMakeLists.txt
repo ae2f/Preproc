@@ -5,6 +5,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_PDB_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/pdb)
 
 add_executable(Inc main.c)
+target_include_directories(Inc PRIVATE ${PROJECT_BINARY_DIR})
 
 set(DIRLEN	150)
 set(PATHLEN	150)
@@ -18,5 +19,5 @@ option(NDEBUG			"" ON)
 
 configure_file(
 	${PROJECT_SOURCE_DIR}/main.h.in
-	${PROJECT_SOURCE_DIR}/.main.h
+	${PROJECT_BINARY_DIR}/.main.h
 	)

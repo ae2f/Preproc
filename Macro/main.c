@@ -1,4 +1,12 @@
-#include "./.main.h"
+#include <.main.h>
+
+#ifndef	_MAIN_H	/** This section is for .main.h when it is not grepped by ast or somehting */
+#define	ae2f_MAC_KEYWORD	"ae2f_MAC"
+#define	CMT_REQUIRED		1
+#define	SZPARAM			10
+#define	SZTPARAM		10
+#endif
+
 #include <stdio.h>
 #include <stddef.h>
 

@@ -8,7 +8,8 @@ option(STRGEN "" OFF)
 set(BINGEN_BUFFSZ 50)
 
 add_executable(FileRaw main.c)
+target_include_directories(FileRaw PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 configure_file(
 	${CMAKE_CURRENT_SOURCE_DIR}/main.h.in
-	${CMAKE_CURRENT_SOURCE_DIR}/.main.h
+	${CMAKE_CURRENT_BINARY_DIR}/.main.h
 	)
