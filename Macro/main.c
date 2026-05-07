@@ -12,12 +12,13 @@
 #include <stdio.h>
 #include <stddef.h>
 
+
 int main(void);
 
 #define BOOK (ae2f_MAC_KEYWORD "(")
 #define	STRLEN(a)	((int)(sizeof(a) - 1))
 
-#if CMT_REQUIRED
+#if CMT_REQUIRED	/* comment required */
 #define dbg_puts(s) fputs(s, stdout)
 #else
 #define dbg_puts(s)
@@ -25,14 +26,14 @@ int main(void);
 
 #define SZBOOK ((size_t)(sizeof(BOOK) - 1))
 
-char SEE[sizeof(BOOK)] = {
+char SEE_BUF[sizeof(BOOK)] = {
         0,
 };
 
-char PARAM[SZPARAM + 2 + (CMT_REQUIRED) * 4] = {
+char PARAMS_BUF[SZPARAM + 2 + (CMT_REQUIRED) * 4] = {
         0,
 };
-char TPARAMS[SZTPARAM + 1] = {
+char TPARAMS_BUF[SZTPARAM + 1] = {
         0,
 };
 
@@ -43,302 +44,295 @@ char ENDL[] = " \\\n";
 #define STATE_UNEXPECTED 2
 #define STATE_OVERRUN 3
 
-#define casenewlines                                                           \
-        case '\n':                                                                   \
-case '\r'
+#define casenewlines	\
+        case '\n':	\
+	case '\r'
 
-#define caseblanks                                                             \
-        case ' ':                                                                    \
-case '\t':                                                                   \
+#define caseblanks	\
+        case ' ':	\
+	case '\t':	\
 casenewlines
 
 #define isAlph(c)                                                              \
         ((((c) >= 'A') && ((c) <= 'Z')) || (((c) >= 'a') && ((c) <= 'z')))
 #define isNumber(c) (((c) >= '0') && ((c) <= '9'))
-#define isVarName(c) ((isAlph(c) || isNumber(c)) || (c) == '_')
+#define isVarName(c) ((isAlph(c) || isNumber(c)) || (c) == '_')	/* TODO: first character shouldn't be number*/
 #define isNewLine(c) ((c) == '\n' || (c) == '\r')
 
 #define isTrue(u, m) ((u) & (m))
-#define setTrue(u, m) ((u) | (m))
+#define setTrue(u, m) ((u) |= (m))
+#define setFalse(u, m) ((u) &= ~((unsigned)m))
 
-#define setFalse(u, m) ((u) & ~((unsigned)m))
 int main(void) {
-	/**  register char prmtype = 0; */
+	/**  register char prms_lentype = 0; */
 
-	int c;
+	int ch;
 	int l;
-	int tprm = 0;
-	int prm = 0;
+	int tprms_len = 0;
+	int prms_len = 0;
 	int stack = 0;
 
 	enum {
-		PRM_CMT = 1,
-		PRM_SPACE_FOUND = 2,
-		PRM_FIRST = 4,
-		PRM_IS_FN_ARG = 8,
-		PRM_IS_BYPASSING_ARG = 16
+		FIELD_CMT = 1,
+		FIELD_SPACE_FOUND = 2,
+		FIELD_FIRST = 4,
+		FIELD_IS_FN_ARG = 8,
+		FIELD_IS_BYPASSING_ARG = 16
 	};
 
-	unsigned prm_bool = 0;
-
+	unsigned field = 0;
 
 	puts("#undef\t__ae2f_MACRO_GENERATED\n"
 			"#define\t__ae2f_MACRO_GENERATED\t1");
-	while ((c = fgetc(stdin)) != EOF) {
+	while ((ch = fgetc(stdin)) != EOF) {
 
 		goto __START;
 __REST:
-		if (c != (BOOK)[0]) {
-			l = fputc(c, stdout);
+		if (ch != (BOOK)[0]) {
+			l = fputc(ch, stdout);
 			if (l < 0)
-				return 1;
+				return STATE_OUTFAILED;
 		}
 		continue;
 
 __START:
-		if (c == '\"') goto STRING;
+		if (ch == '\"') goto STRING;
 
-		if (c == '#') {
+		if (ch == '#') {
 			const char INCLUDE[sizeof("#include")] = "#include";
-			char SEE_INC[STRLEN(INCLUDE)];
+			char SEE_INCLUDE[STRLEN(INCLUDE)];
 			size_t i = 1;
-			SEE_INC[0] = '#';
-			fputc('#', stdout);
-			for (; i < (size_t)STRLEN(INCLUDE); i++) {
-				SEE_INC[i] = (char)fgetc(stdin);
-				fputc(SEE_INC[i], stdout);
+			SEE_INCLUDE[0] = '#';
 
-				if (SEE_INC[i] != INCLUDE[i]) {
+			l = fputc(SEE_INCLUDE[0], stdout);
+			if (l < 0)	return STATE_OUTFAILED;
+
+			for (; i < (size_t)STRLEN(INCLUDE); ++i) {
+				SEE_INCLUDE[i] = (char)fgetc(stdin);
+				l = fputc(SEE_INCLUDE[i], stdout);
+				if (l < 0)	return STATE_OUTFAILED;
+
+				if (SEE_INCLUDE[i] != INCLUDE[i]) {
 					break;
 				}
 			}
 
 			if (i == STRLEN(INCLUDE)) {
-				while ((c = fgetc(stdin)) != EOF && !isNewLine(c)) {
-					fputc(c, stdout);
+				while ((ch = fgetc(stdin)) != EOF && !isNewLine(ch)) {
+					fputc(ch, stdout);
 				}
 
-				puts("\n#undef __ae2f_MACRO_GENERATED\n"
-						"#define __ae2f_MACRO_GENERATED 1");
+				l = puts("\n#undef __ae2f_MACRO_GENERATED\n"
+					"#define __ae2f_MACRO_GENERATED 1");
+				if (l < 0)	return STATE_OUTFAILED;
+				
 			}
-		}
-
-		else if (c == (BOOK)[0]) {
+		} else if (ch == (BOOK)[0]) {
 			size_t i = 1;
-			SEE[0] = (BOOK)[0];
+			SEE_BUF[0] = (BOOK)[0];
 			for (; i < SZBOOK; i++) {
-				SEE[i] = (char)fgetc(stdin);
+				SEE_BUF[i] = (char)fgetc(stdin);
 
-				if (SEE[i] != (BOOK)[i]) {
-					SEE[i + 1] = 0;
+				if (SEE_BUF[i] != (BOOK)[i]) {
+					SEE_BUF[i + 1] = 0;
 					break;
 				}
 			}
 
 			if (i < SZBOOK) {
-				if (fputs(SEE, stdout) < 0)
-					return 1;
+				l = fputs(SEE_BUF, stdout);
+				if (l < 0)	return STATE_OUTFAILED;
 
 				continue;
 			}
 
 			l = fputs("#define _", stdout);
+			if (l < 0)	return STATE_OUTFAILED;
 
-			if (l < 0)
-				return STATE_OUTFAILED;
-
-			tprm = 0;
-			prm = 0;
+			tprms_len = 0;
+			prms_len = 0;
 			stack = 0; /** init */
-			/** prmtype = 1; */
+			/** prms_lentype = 1; */
 
 			while (1) {
-				switch ((c = fgetc(stdin))) {
+				switch ((ch = fgetc(stdin))) {
 					case EOF:
 						return STATE_UNEXPECTED;
 
 					case ')':
-						if(!(stack--))
-							goto TPARAMED;
+						if(!(stack--))	goto TPARAMS_END;
 						break;
 
 					case '(':
 						stack++;
 						break;
 
-
 					default: {
-							 TPARAMS[tprm] = (char)c;
-							 if (tprm == SZTPARAM)
-								 return STATE_OVERRUN;
-							 tprm++;
-						 }
-
-						 goto CBLANK_0;
-
-CBLANK_0:
+						TPARAMS_BUF[tprms_len] = (char)ch;
+						if (tprms_len == SZTPARAM)	return STATE_OVERRUN;
+						tprms_len++;
+					}
+					goto FALLTROUGH_0;
 caseblanks:
-					break;
+FALLTROUGH_0:
+						break;
 				}
 			} /** tparam */
 
-TPARAMED:
+TPARAMS_END:
 			while (1) {
-				switch (c = fgetc(stdin)) {
+				switch (ch = fgetc(stdin)) {
 					case EOF:
-						return 1;
+						return STATE_OUTFAILED;
 					default:
-						if (c == '{') {
-							prm_bool = setTrue(prm_bool, PRM_IS_BYPASSING_ARG);
-							c = '(';
+						if (ch == '{') {
+							setTrue(field, FIELD_IS_BYPASSING_ARG);
+							ch = '(';
 						}
 
-						l = fputc(c, stdout);
-						if (l < 0)
-							return STATE_OUTFAILED;
+						l = fputc(ch, stdout);
+						if (l < 0)	return STATE_OUTFAILED;
 
-						if (c == '(')
-							goto FNED;
-						goto CBLANK_1;
-CBLANK_1:
+						if (ch == '(')	goto FNNAME_END;
+
+						goto FALLTROUGH_1;	
 caseblanks:
+FALLTROUGH_1:
 						break;
 				}
 			} /** fn */
 
-FNED:
-
+FNNAME_END:
 			dbg_puts(" \\\n\t/** tparam */ \\\n\t\t");
-			TPARAMS[tprm] = 0;
-			if (fputs(TPARAMS, stdout) < 0)
-				return STATE_OUTFAILED;
+			TPARAMS_BUF[tprms_len] = 0;
+
+			l = fputs(TPARAMS_BUF, stdout);
+			if (l < 0)	return STATE_OUTFAILED;
 
 			dbg_puts(" \\\n \\\n\t/** param */ \\\n\t\t");
-			prm = 0;
-			prm_bool |= PRM_CMT | PRM_FIRST;
+			prms_len = 0;
+			setTrue(field, FIELD_CMT | FIELD_FIRST);
 			stack = 0;
-			prm_bool = setFalse(prm_bool, PRM_IS_FN_ARG);
+			setFalse(field, FIELD_IS_FN_ARG);
 
-			if(isTrue(prm_bool, PRM_IS_BYPASSING_ARG)) {
-				c = ')';
+			if(isTrue(field, FIELD_IS_BYPASSING_ARG)) {
+				ch = ')';
 				fputs("/*", stdout);
 				goto LBL_BYPASS_SCOPE;
 			}
 
 			while (1) {
 
-				if (isTrue(prm_bool, PRM_CMT)) {
+				if (isTrue(field, FIELD_CMT)) {
 					if (fputs("/* ", stdout) < 0)
 						return STATE_OUTFAILED;
-					prm_bool = setFalse(prm_bool, PRM_CMT);
+					setFalse(field, FIELD_CMT);
 				}
 
-				switch (c = fgetc(stdin)) {
+				switch (ch = fgetc(stdin)) {
 					case EOF:
 						return 1;
 
 caseblanks:
 						fputc(' ', stdout);
 PRM_CASE_BLANK:
-						prm_bool = setTrue(prm_bool, PRM_SPACE_FOUND);
+						setTrue(field, FIELD_SPACE_FOUND);
 						break;
 
 					default:
-						if (!isVarName(c)) {
-							PARAM[prm] = 0;
-							fputs(PARAM, stdout);
-							fputc(c, stdout);
-							prm = 0;
+						if (!isVarName(ch)) {
+							PARAMS_BUF[prms_len] = 0;
+							fputs(PARAMS_BUF, stdout);
+							fputc(ch, stdout);
+							prms_len = 0;
 							goto PRM_CASE_BLANK;
 						}
 
-						if (isTrue(prm_bool, PRM_FIRST)) {
-							prm_bool = setFalse(prm_bool, PRM_FIRST);
+						if (isTrue(field, FIELD_FIRST)) {
+							setFalse(field, FIELD_FIRST);
 							if (fputc(',', stdout) < 0)
 								return STATE_OUTFAILED;
 						}
 
-						if (isTrue(prm_bool, PRM_SPACE_FOUND)) {
-							PARAM[prm] = 0;
-							fputs(PARAM, stdout);
-							prm = 0;
-							prm_bool = setFalse(prm_bool, PRM_SPACE_FOUND);
+						if (isTrue(field, FIELD_SPACE_FOUND)) {
+							PARAMS_BUF[prms_len] = 0;
+							fputs(PARAMS_BUF, stdout);
+							prms_len = 0;
+							setFalse(field, FIELD_SPACE_FOUND);
 						}
 
-						PARAM[prm] = (char) c;
-						if (prm == SZPARAM)
+						PARAMS_BUF[prms_len] = (char) ch;
+						if (prms_len == SZPARAM)
 							return STATE_OVERRUN;
-						prm++;
+						prms_len++;
 						break;
 
 					case '(':
-						if(isTrue(prm_bool, PRM_IS_FN_ARG)) {
+						if(isTrue(field, FIELD_IS_FN_ARG)) {
 							while((fgetc(stdin)) != ')');
 						} else {
 							stack++;
-							prm_bool = setTrue(prm_bool, PRM_IS_FN_ARG);
+							setTrue(field, FIELD_IS_FN_ARG);
 						}
 
 						break;
 
 					case ',':
-						prm_bool = setFalse(prm_bool, PRM_IS_FN_ARG);
+						setFalse(field, FIELD_IS_FN_ARG);
 						goto LBL_BYPASS_SCOPE;
 					case ')':
 LBL_BYPASS_SCOPE:
-						if(c == ')' && stack--) {
+						if(ch == ')' && stack--) {
 							break;
 						}
 
-						PARAM[prm] = (char) c;
-						PARAM[prm + 1] = 0;
+						PARAMS_BUF[prms_len] = (char) ch;
+						PARAMS_BUF[prms_len + 1] = 0;
 
 						if (fputs(" */ ", stdout) < 0)
 							return STATE_OUTFAILED;
 
-						prm_bool = setTrue(prm_bool,PRM_CMT);
+						setTrue(field,FIELD_CMT);
 
 #if CMT_REQUIRED
-						if (c == ')') {
-							PARAM[prm] = ' ';
-							PARAM[prm + 1] = '\\';
-							PARAM[prm + 2] = '\n';
-							PARAM[prm + 3] = (char)c;
-							PARAM[prm + 4] = 0;
-							l = fputs(PARAM, stdout);
-						} else
+						if (ch == ')') {
+							PARAMS_BUF[prms_len] = ' ';
+							PARAMS_BUF[prms_len + 1] = '\\';
+							PARAMS_BUF[prms_len + 2] = '\n';
+							PARAMS_BUF[prms_len + 3] = (char)ch;
+							PARAMS_BUF[prms_len + 4] = 0;
+						} 
 #endif
-							l = fputs(PARAM, stdout);
-
+						l = fputs(PARAMS_BUF, stdout);
 						if (l < 0)
 							return STATE_OUTFAILED;
 
-						prm = 0;
+						prms_len = 0;
 
-						if (',' == c) {
+						if (',' == ch) {
 							dbg_puts(" \\\n\t\t");
 							goto PRM_CASE_BLANK;
 						} else {
-							goto PRMED;
+							goto PRM_END;
 						}
 				}
 			}
-PRMED:
+PRM_END:
 
 			stack = 0;
-			if(isTrue(prm_bool, PRM_IS_BYPASSING_ARG)) {
-				prm_bool = setFalse(prm_bool, PRM_IS_BYPASSING_ARG);
-				c = '{';
+			if(isTrue(field, FIELD_IS_BYPASSING_ARG)) {
+				setFalse(field, FIELD_IS_BYPASSING_ARG);
+				ch = '{';
 				goto LBL_UP_STACK;
 			}
 
 			while (1) {
-				switch (c = fgetc(stdin)) {
+				switch (ch = fgetc(stdin)) {
 					case EOF:
 						return 1;
 
 casenewlines:
-						ENDL[2] = (char) c;
+						ENDL[2] = (char) ch;
 						l = fputs(ENDL, stdout);
 						if (l < 0)
 							return STATE_OUTFAILED;
@@ -346,12 +340,12 @@ casenewlines:
 						break;
 
 					case '$':
-						c = '#';
+						ch = '#';
 						goto LBL_CASENEWLINE_DEFAULT;
 					default:
 LBL_CASENEWLINE_DEFAULT:
 
-						l = fputc(c, stdout);
+						l = fputc(ch, stdout);
 						if (l < 0)
 							return STATE_OUTFAILED;
 						break;
@@ -379,34 +373,30 @@ LBL_UP_STACK:
 			}
 			/* stack */
 STACKED:;
-		}
-
-		else {
+		} else {
 			goto __REST;
 		}
 	}
 
-	puts(
-			"\n#undef\t__ae2f_MACRO_GENERATED\n"
-			"\n#define\t__ae2f_MACRO_GENERATED\t0\n"
-			);
+	puts("\n#undef\t__ae2f_MACRO_GENERATED\n"
+		"\n#define\t__ae2f_MACRO_GENERATED\t0\n");
 
 	return 0;
 
 STRING:
 	fputc('\"', stdout);
-	while((c = fgetc(stdin)) != EOF) {
-		switch(c) {
+	while((ch = fgetc(stdin)) != EOF) {
+		switch(ch) {
 			case '\"':
 				goto __REST;
 
 			case '\\':
-				fputc(c, stdout);
-				if((c = fgetc(stdin)) == EOF) break;
-				fputc(c, stdout);
+				fputc(ch, stdout);
+				if((ch = fgetc(stdin)) == EOF) break;
+				fputc(ch, stdout);
 				break;
 			default:
-				fputc(c, stdout);
+				fputc(ch, stdout);
 				break;
 		}
 	}
