@@ -1,3 +1,5 @@
+#define	_CRT_SECURE_NO_WARNINGS	1
+
 #include <.main.h>
 
 #ifndef	_MAIN_H	/** This section is for .main.h when it is not grepped by ast or somehting */
