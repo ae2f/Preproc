@@ -135,10 +135,12 @@ ae2f_MAC() foo5(int& bar) {}
 /** before */
 
 ae2f_MAC(bar, ) foo(int bar1) {}
+ae2f_MAC((bar, )) foo1(int bar1) {} /** or with brace-scoped to satisfy strict c90 */
 ```
 
 ```c
 /** after */
+
 #define _foo( \
 	/** tparam */ \
 		bar, \
@@ -146,6 +148,13 @@ ae2f_MAC(bar, ) foo(int bar1) {}
 	/** param */ \
 		/* , int */ bar1 \
 ) {}
+#define _foo1( \
+	/** tparam */ \
+		bar, \
+ \
+	/** param */ \
+		/* , int */ bar1 \
+) {} /** or with brace-scoped to satisfy strict c90 */
 ```
 
 - one file must be ensured to be scoped with `__ae2f_MACRO_GENERATED`.
