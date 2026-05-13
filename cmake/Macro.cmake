@@ -4,26 +4,6 @@ option(ae2f_MAC_BUILD "Convention variable. If on, macro function will be built.
 macro(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
 	message(STATUS "ae2f::Macro::init")
 
-	if(DEFINED ae2f_PreProc_CMAKE_C_STANDARD)
-		set(cstd "-DCMAKE_C_STANDARD=${ae2f_PreProc_CMAKE_C_STANDARD}")
-	else()
-		set(cstd "")
-	endif()
-
-	if(DEFINED ae2f_PreProc_CMAKE_C_COMPILER)
-		set(cc "-DCMAKE_C_COMPILER=${ae2f_PreProc_CMAKE_C_COMPILER}")
-	else()
-		set(cc "")
-	endif()
-
-	if(DEFINED ae2f_PreProc_CMAKE_GENERATOR)
-		set(gen "-G${ae2f_PreProc_CMAKE_GENERATOR}")
-	elseif(DEFINED CMAKE_GENERATOR)
-		set(gen "-G${CMAKE_GENERATOR}")
-	else()
-		set(gen "")
-	endif()
-
 	set(__name ${ae2f_MAC_KEYWORD}${ae2f_PreProc_CMAKE_C_COMPILER}${ae2f_PreProc_CMAKE_C_STANDARD})
 
 	if(NOT DEFINED ae2f_Macro${__name}SZPRM)

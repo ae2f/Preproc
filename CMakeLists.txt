@@ -1,26 +1,57 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(Preproc VERSION 1.1.4)
+project(Preproc VERSION 1.1.4 LANGUAGES C)
 
-if(DEFINED ae2f_PreProc_CMAKE_C_COMPILER)
-	set(ae2f_PreProc_C_PRM "-DCMAKE_C_COMPILER=${ae2f_PreProc_CMAKE_C_COMPILER}")
+set(ae2f_PreProc_CMAKE_C_COMPILER "${CMAKE_C_COMPILER}" CACHE STRING "${CMAKE_C_COMPILER}")
+set(ae2f_PreProc_CMAKE_CXX_COMPILER "${CMAKE_CXX_COMPILER}" CACHE STRING "${CMAKE_CXX_COMPILER}")
+
+set(ae2f_PreProc_CMAKE_C_STANDARD "${CMAKE_C_STANDARD}" CACHE STRING "${CMAKE_C_STANDARD}")
+set(ae2f_PreProc_CMAKE_CXX_STANDARD "${CMAKE_CXX_STANDARD}" CACHE STRING "${CMAKE_CXX_STANDARD}")
+
+set(ae2f_PreProc_CMAKE_GENERATOR "${CMAKE_GENERATOR}" CACHE STRING "${CMAKE_GENERATOR}")
+
+message(STATUS "\n"
+	"Cache Memory Used: \n"
+	"ae2f_PreProc_CMAKE_C_COMPILER: ${ae2f_PreProc_CMAKE_C_COMPILER}\n"
+	"ae2f_PreProc_CMAKE_CXX_COMPILER: ${ae2f_PreProc_CMAKE_CXX_COMPILER}\n"
+	"ae2f_PreProc_CMAKE_C_STANDARD: ${ae2f_PreProc_CMAKE_C_STANDARD}\n"
+	"ae2f_PreProc_CMAKE_GENERATOR: ${ae2f_PreProc_CMAKE_GENERATOR}\n"
+	)
+
+if(NOT ae2f_PreProc_CMAKE_C_CC_COMPILER STREQUAL "")
+	set(ae2f_PreProc_C_CC_PRM "-DCMAKE_CXX_COMPILER=${ae2f_PreProc_CMAKE_CXX_COMPILER}")
 else()
-	set(ae2f_PreProc_C_PRM "")
+	set(ae2f_PreProc_C_CC_PRM "")
 endif()
 
-if(DEFINED ae2f_PreProc_CMAKE_C_STANDARD)
+if(NOT ae2f_PreProc_CMAKE_C_C_COMPILER STREQUAL "")
+	set(ae2f_PreProc_C_C_PRM "-DCMAKE_C_COMPILER=${ae2f_PreProc_CMAKE_C_COMPILER}")
+else()
+	set(ae2f_PreProc_C_C_PRM "")
+endif()
+
+set(ae2f_PreProc_C_PRM ${ae2f_PreProc_C_CC_PRM} ${ae2f_PreProc_C_C_PRM} "-Dae2f_TEST=OFF" "-Dae2f_CXX=OFF")
+
+if(NOT ae2f_PreProc_CMAKE_C_STANDARD STREQUAL "")
 	set(ae2f_PreProc_CSTD_PRM "-DCMAKE_C_STANDARD=${ae2f_PreProc_CMAKE_C_STANDARD}")
 else()
 	set(ae2f_PreProc_CSTD_PRM "")
 endif()
 
-if(DEFINED ae2f_PreProc_CMAKE_GENERATOR)
+if(NOT ae2f_PreProc_CMAKE_GENERATOR STREQUAL "")
 	set(gen "-G${ae2f_PreProc_CMAKE_GENERATOR}")
 elseif(DEFINED CMAKE_GENERATOR)
 	set(gen "-G${CMAKE_GENERATOR}")
 else()
 	set(gen "")
 endif()
+
+
+message(STATUS "\n"
+	"Generated: \n"
+	"ae2f_PreProc_C_PRM: ${ae2f_PreProc_C_PRM}	\n"
+	"ae2f_PreProc_CSTD_PRM: ${ae2f_PreProc_CSTD_PRM}	\n"
+	)
 
 set(ae2f_Macro_ROOT "${PROJECT_SOURCE_DIR}/Macro/" CACHE STRING "${PROJECT_SOURCE_DIR}/Macro")
 set(ae2f_Inc_ROOT "${PROJECT_SOURCE_DIR}/Inc/" CACHE STRING "${PROJECT_SOURCE_DIR}/Inc")
@@ -52,6 +83,7 @@ if(NOT EXISTS ${ae3f_easyredir_Wh})
 		)
 endif()
 
+message(STATUS "sub-configuring ${ae3f_easyredir_Wh}")
 execute_process(
 	COMMAND ${CMAKE_COMMAND}
 	"-S" "${ae3f_easyredir_Wh}"
@@ -76,9 +108,7 @@ set(ae3f_easyredir_exe ${_ae3f_easyredir_exe} CACHE STRING "executable of easyre
 message(STATUS "ae2f::preproc::cfg easyredir exe ready: ${ae3f_easyredir_exe}")
 
 # add subdirectory
-if(NOT TARGET ae2f::CoreScript)
-	add_subdirectory(${ae2f_CoreScript_Wh} ${ae2f_submod}/ae2f/CoreScript)
-endif()
+add_subdirectory(${ae2f_CoreScript_Wh} ${ae2f_submod}/ae2f/CoreScript)
 
 if(NOT TARGET ae2f::Preproc)
 	ae2f_CoreLibTentConfigCustom(

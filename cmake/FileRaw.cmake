@@ -1,26 +1,6 @@
 macro(ae2f_FileRaw_init prm_STRGEN prm_BINGEN_BUFFSZ)
 	message(STATUS "ae2f::FileRaw::init")
 
-	if(DEFINED ae2f_PreProc_CMAKE_C_STANDARD)
-		set(cstd "-DCMAKE_C_STANDARD=${ae2f_preProc_CMAKE_C_STANDARD}")
-	else()
-		set(cstd "")
-	endif()
-
-	if(DEFINED ae2f_PreProc_CMAKE_C_COMPILER)
-		set(cc "-DCMAKE_C_COMPILER=${ae2f_PreProc_CMAKE_C_COMPILER}")
-	else()
-		set(cc "")
-	endif()
-
-	if(DEFINED ae2f_PreProc_CMAKE_GENERATOR)
-		set(gen "-G${ae2f_PreProc_CMAKE_GENERATOR}")
-	elseif(DEFINED CMAKE_GENERATOR)
-		set(gen "-G${CMAKE_GENERATOR}")
-	else()
-		set(gen "")
-	endif()
-
 	execute_process(
 		WORKING_DIRECTORY ${ae2f_FileRaw_ROOT}
 		COMMAND 

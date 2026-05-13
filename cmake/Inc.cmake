@@ -3,26 +3,6 @@
 macro(ae2f_Inc_init prm_DIRLEN prm_PATHLEN prm_STACKLEN prm_INC_IGNORE_STACKSMASH prm_INC_IGNORE_NFOUND prm_INC_REPT_CHECK)
 	message(STATUS "[ae2f::Inc::init]")
 
-	if(DEFINED ae2f_PreProc_CMAKE_C_STANDARD)
-		set(cstd "-DCMAKE_C_STANDARD=${ae2f_PreProc_CMAKE_C_STANDARD}")
-	else()
-		set(cstd "")
-	endif()
-
-	if(DEFINED ae2f_PreProc_CMAKE_C_COMPILER)
-		set(cc "-DCMAKE_C_COMPILER=${ae2f_PreProc_CMAKE_C_COMPILER}")
-	else()
-		set(cc "")
-	endif()
-
-	if(DEFINED ae2f_PreProc_CMAKE_GENERATOR)
-		set(gen "-G${ae2f_PreProc_CMAKE_GENERATOR}")
-	elseif(DEFINED CMAKE_GENERATOR)
-		set(gen "-G${CMAKE_GENERATOR}")
-	else()
-		set(gen "")
-	endif()
-
 	set(__name ${prm_DIRLEN}${prm_PATHLEN}${prm_STACKLEN}${prm_INC_IGNORE_NFOUND}${prm_INC_IGNORE_STACKSMASH}${prm_INC_REPT_CHECK})
 
 	execute_process(
