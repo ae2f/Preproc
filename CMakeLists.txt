@@ -2,21 +2,13 @@ cmake_minimum_required(VERSION 3.10)
 
 project(Preproc VERSION 1.1.4 LANGUAGES C)
 
-set(ae2f_PreProc_CMAKE_C_COMPILER "${CMAKE_C_COMPILER}" CACHE STRING "${CMAKE_C_COMPILER}")
-set(ae2f_PreProc_CMAKE_CXX_COMPILER "${CMAKE_CXX_COMPILER}" CACHE STRING "${CMAKE_CXX_COMPILER}")
+set(ae2f_PreProc_CMAKE_C_COMPILER "${CMAKE_C_COMPILER}" CACHE STRING "Sub-agent C compiler")
+set(ae2f_PreProc_CMAKE_CXX_COMPILER "${CMAKE_CXX_COMPILER}" CACHE STRING "Sub-agent C++ compiler")
 
-set(ae2f_PreProc_CMAKE_C_STANDARD "${CMAKE_C_STANDARD}" CACHE STRING "${CMAKE_C_STANDARD}")
-set(ae2f_PreProc_CMAKE_CXX_STANDARD "${CMAKE_CXX_STANDARD}" CACHE STRING "${CMAKE_CXX_STANDARD}")
+set(ae2f_PreProc_CMAKE_C_STANDARD "${CMAKE_C_STANDARD}" CACHE STRING "Sub-agent C version")
+set(ae2f_PreProc_CMAKE_CXX_STANDARD "${CMAKE_CXX_STANDARD}" CACHE STRING "Sub-agent C++ version")
 
-set(ae2f_PreProc_CMAKE_GENERATOR "${CMAKE_GENERATOR}" CACHE STRING "${CMAKE_GENERATOR}")
-
-message(STATUS "\n"
-	"Cache Memory Used: \n"
-	"ae2f_PreProc_CMAKE_C_COMPILER: ${ae2f_PreProc_CMAKE_C_COMPILER}\n"
-	"ae2f_PreProc_CMAKE_CXX_COMPILER: ${ae2f_PreProc_CMAKE_CXX_COMPILER}\n"
-	"ae2f_PreProc_CMAKE_C_STANDARD: ${ae2f_PreProc_CMAKE_C_STANDARD}\n"
-	"ae2f_PreProc_CMAKE_GENERATOR: ${ae2f_PreProc_CMAKE_GENERATOR}\n"
-	)
+set(ae2f_PreProc_CMAKE_GENERATOR "${CMAKE_GENERATOR}" CACHE STRING "Sub-agent Generator")
 
 if(NOT ae2f_PreProc_CMAKE_C_CC_COMPILER STREQUAL "")
 	set(ae2f_PreProc_C_CC_PRM "-DCMAKE_CXX_COMPILER=${ae2f_PreProc_CMAKE_CXX_COMPILER}")
@@ -30,7 +22,15 @@ else()
 	set(ae2f_PreProc_C_C_PRM "")
 endif()
 
-set(ae2f_PreProc_C_PRM ${ae2f_PreProc_C_CC_PRM} ${ae2f_PreProc_C_C_PRM} "-Dae2f_TEST=OFF" "-Dae2f_CXX=OFF")
+set(ae2f_PreProc_C_PRM ${ae2f_PreProc_C_CC_PRM} ${ae2f_PreProc_C_C_PRM} "-Dae2f_TEST=OFF" "-Dae2f_CXX=OFF" CACHE STRING "Sub-agent parameter")
+
+message(STATUS "\n"
+	"Cache Memory Used: \n"
+	"ae2f_PreProc_CMAKE_C_COMPILER: ${ae2f_PreProc_CMAKE_C_COMPILER}\n"
+	"ae2f_PreProc_CMAKE_CXX_COMPILER: ${ae2f_PreProc_CMAKE_CXX_COMPILER}\n"
+	"ae2f_PreProc_CMAKE_C_STANDARD: ${ae2f_PreProc_CMAKE_C_STANDARD}\n"
+	"ae2f_PreProc_CMAKE_GENERATOR: ${ae2f_PreProc_CMAKE_GENERATOR}\n"
+	)
 
 if(NOT ae2f_PreProc_CMAKE_C_STANDARD STREQUAL "")
 	set(ae2f_PreProc_CSTD_PRM "-DCMAKE_C_STANDARD=${ae2f_PreProc_CMAKE_C_STANDARD}")

@@ -9,31 +9,34 @@ macro(ae2f_Inc_init prm_DIRLEN prm_PATHLEN prm_STACKLEN prm_INC_IGNORE_STACKSMAS
 		WORKING_DIRECTORY ${ae2f_Inc_ROOT}
 		COMMAND ${CMAKE_COMMAND}
 		"-S" "." "-B" ${ae2f_Preproc_BINROOT}/util/Inc/${__name}
-		${gen} ${cstd} ${cc}
 		-DDIRLEN=${prm_DIRLEN}
 		-DPATHLEN=${prm_PATHLEN}
 		-DSTACKLEN=${prm_STACKLEN}
 		-DINC_IGNORE_SMASH=${prm_INC_IGNORE_STACKSMASH}
 		-DINC_IGNORE_NFOUND=${prm_INC_IGNORE_NFOUND}
 		-DINC_REPT_CHECK=${prm_INC_REPT_CHECK}
+		"-Dae2f_ProjRoot=${ae2f_ProjRoot}"
+		"-Dae2f_submod=${ae2f_submod}"
+		${ae2f_PreProc_CSTD_PRM}
 		${ae2f_PreProc_C_PRM}
+		"-DCMAKE_BUILD_TYPE=Release"
 		${ARGN}
-  		RESULT_VARIABLE ConfOut
-	)
+		RESULT_VARIABLE ConfOut
+		)
 
- 	if(NOT ConfOut EQUAL 0)
+	if(NOT ConfOut EQUAL 0)
 		message(FATAL_ERROR "[ae2f_Inc_init] Configuration failed. ${ConfOut}")
 	endif()
 
 	execute_process(
 		WORKING_DIRECTORY ${ae2f_Inc_ROOT}
 		COMMAND ${CMAKE_COMMAND} "--build" ${ae2f_Preproc_BINROOT}/util/Inc/${__name}
-  		RESULT_VARIABLE BuildOut
+		RESULT_VARIABLE BuildOut
 		)
 
 	file(GLOB_RECURSE ae2f_inc_last_exe ${ae2f_Preproc_BINROOT}/util/Inc/${__name}/bin/**)
-  
- 	if(NOT BuildOut EQUAL 0)
+
+	if(NOT BuildOut EQUAL 0)
 		message(FATAL_ERROR "[ae2f_Inc_init] Build failed. ${BuildOut}")
 	endif()
 

@@ -26,8 +26,10 @@ macro(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
 			-Dae2f_Macro_SZPARAM=${prm_SZPARAM}
 			-Dae2f_Macro_SZTPARAM=${prm_SZTPARAM}
 			-Dae2f_MAC_KEYWORD=${ae2f_MAC_KEYWORD}
+			${ae2f_PreProc_CSTD_PRM}
 			${ae2f_PreProc_C_PRM}
-			${gen} ${cstd} ${cc}
+			"-DCMAKE_BUILD_TYPE=Release"
+			${gen}
 			${ARGN}
 			-Dae2f_submod=${ae2f_submod}
 			-Dae2f_ProjRoot=${ae2f_ProjRoot}

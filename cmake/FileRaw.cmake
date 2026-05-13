@@ -7,8 +7,12 @@ macro(ae2f_FileRaw_init prm_STRGEN prm_BINGEN_BUFFSZ)
 		${CMAKE_COMMAND} "-S" "." "-B" ${ae2f_Preproc_BINROOT}/util/FileRaw/A${prm_STRGEN}
 		-DSTRGEN=${prm_STRGEN}
 		-DBINGEN_BUFFSZ=${prm_BINGEN_BUFFSZ}
-		${gen} ${cstd} ${cc}
+		"-Dae2f_ProjRoot=${ae2f_ProjRoot}"
+		"-Dae2f_submod=${ae2f_submod}"
+		${ae2f_PreProc_CSTD_PRM}
 		${ae2f_PreProc_C_PRM}
+		"-DCMAKE_BUILD_TYPE=Release"
+		${gen}
 		${ARGN}
 		RESULT_VARIABLE ConfOut
 		)
