@@ -4,7 +4,8 @@ option(ae2f_MAC_BUILD "Convention variable. If on, macro function will be built.
 macro(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
 	message(STATUS "ae2f::Macro::init")
 
-	set(__name ${ae2f_MAC_KEYWORD}${ae2f_PreProc_CMAKE_C_COMPILER}${ae2f_PreProc_CMAKE_C_STANDARD})
+	set(__name ${ae2f_MAC_KEYWORD}${prm_SZPARAM}${prm_SZTPARAM}${prm_CMT_REQUIRED})
+
 
 	if(NOT DEFINED ae2f_Macro${__name}SZPRM)
 		set(ae2f_Macro${__name}SZPRM 0)
