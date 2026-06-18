@@ -204,6 +204,8 @@ macro(ae2f_Macro_Lib_V2
 
 		prm_guard)
 
+	file(MAKE_DIRECTORY ${prm_inc_out_dir})
+
 	ae2f_Macro_Lib_V(
 		${prm_namespace}	${prm_name} ${prm_prefix} 
 		${prm_src_dir}		${prm_src_glob}
