@@ -7,10 +7,9 @@ set(CMAKE_PDB_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/pdb)
 add_executable(Macro main.c)
 target_include_directories(Macro PRIVATE ${PROJECT_BINARY_DIR}/)
 
-set(ae2f_Macro_CMT_REQUIRED 1)
-set(ae2f_Macro_SZPARAM      50)
-set(ae2f_Macro_SZTPARAM     300)
-set(ae2f_MAC_KEYWORD        ae2f_MAC)
+if(NOT ae2f_MAC_KEYWORD)
+	set(ae2f_MAC_KEYWORD        	ae2f_MAC)
+endif()
 
 configure_file(
 	${PROJECT_SOURCE_DIR}/main.h.in

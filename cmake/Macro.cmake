@@ -1,10 +1,10 @@
 set(ae2f_MAC_KEYWORD "ae2f_MAC")
 option(ae2f_MAC_BUILD "Convention variable. If on, macro function will be built." OFF)
 
-macro(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
+macro(ae2f_Macro_init2 prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM prm_NO_ROOT_BRACKET)
 	message(STATUS "ae2f::Macro::init")
 
-	set(__name ${ae2f_MAC_KEYWORD}${prm_SZPARAM}${prm_SZTPARAM}${prm_CMT_REQUIRED})
+	set(__name a-${ae2f_MAC_KEYWORD}-${prm_SZPARAM}-${prm_SZTPARAM}-${prm_CMT_REQUIRED}-${prm_NO_ROOT_BRACKET})
 
 
 	if(NOT DEFINED ae2f_Macro${__name}SZPRM)
@@ -15,45 +15,45 @@ macro(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
 		set(ae2f_Macro${__name}SZTPRM 0)
 	endif()
 
-	if(${prm_SZPARAM} GREATER ${ae2f_Macro${__name}SZPRM} OR 
-			${prm_SZTPARAM} GREATER ${ae2f_Macro${__name}SZTPRM})
-		file(REMOVE_RECURSE ${ae2f_Preproc_BINROOT}/util/Macro/${__name})
-		file(MAKE_DIRECTORY ${ae2f_Preproc_BINROOT}/util/Macro/${__name})
-		execute_process(
-			WORKING_DIRECTORY ${ae2f_Macro_ROOT}
-			COMMAND ${CMAKE_COMMAND}
-			"-S" "." "-B" "${ae2f_Preproc_BINROOT}/util/Macro/${__name}"
-			-Dae2f_Macro_CMT_REQUIRED=${prm_CMT_REQUIRED}
-			-Dae2f_Macro_SZPARAM=${prm_SZPARAM}
-			-Dae2f_Macro_SZTPARAM=${prm_SZTPARAM}
-			-Dae2f_MAC_KEYWORD=${ae2f_MAC_KEYWORD}
-			${ae2f_PreProc_CSTD_PRM}
-			${ae2f_PreProc_C_PRM}
-			"-DCMAKE_BUILD_TYPE=Release"
-			${gen}
-			${ARGN}
-			-Dae2f_submod=${ae2f_submod}
-			-Dae2f_ProjRoot=${ae2f_ProjRoot}
-			RESULT_VARIABLE ConfOut
-			)
+	file(REMOVE_RECURSE ${ae2f_Preproc_BINROOT}/util/Macro/${__name})
+	file(MAKE_DIRECTORY ${ae2f_Preproc_BINROOT}/util/Macro/${__name})
+	execute_process(
+		WORKING_DIRECTORY ${ae2f_Macro_ROOT}
+		COMMAND ${CMAKE_COMMAND}
+		"-S" "." "-B" "${ae2f_Preproc_BINROOT}/util/Macro/${__name}"
+		-Dae2f_Macro_CMT_REQUIRED=${prm_CMT_REQUIRED}
+		-Dae2f_Macro_SZPARAM=${prm_SZPARAM}
+		-Dae2f_Macro_SZTPARAM=${prm_SZTPARAM}
+		-Dae2f_MAC_KEYWORD=${ae2f_MAC_KEYWORD}
+		-DNO_ROOT_BRACKET=${prm_NO_ROOT_BRACKET}
+		${ae2f_PreProc_CSTD_PRM}
+		${ae2f_PreProc_C_PRM}
+		"-DCMAKE_BUILD_TYPE=Release"
+		${gen}
+		${ARGN}
+		-Dae2f_submod=${ae2f_submod}
+		-Dae2f_ProjRoot=${ae2f_ProjRoot}
+		RESULT_VARIABLE ConfOut
+		)
 
-		if(NOT ConfOut EQUAL 0)
-			message(FATAL_ERROR "[ae2f::Macro::init] Configuration failed. ${ConfOut}")
-		endif()
-
-		execute_process(
-			WORKING_DIRECTORY ${ae2f_Preproc_BINROOT}/util/Macro/${__name}
-			COMMAND ${CMAKE_COMMAND} "--build" "."
-			RESULT_VARIABLE BuildOut
-			)
-
-		if(NOT BuildOut EQUAL 0)
-			message(FATAL_ERROR "[ae2f::Macro::init] Build failed. ${BuildOut}")
-		endif()
-
-		message(STATUS "[ae2f::Macro::init] configuration succeed")
-		file(GLOB_RECURSE ae2f_macro_last_exe ${ae2f_Preproc_BINROOT}/util/Macro/${__name}/bin/**)
+	if(NOT ConfOut EQUAL 0)
+		message(FATAL_ERROR "[ae2f::Macro::init] Configuration failed. ${ConfOut}")
 	endif()
+
+	execute_process(
+		WORKING_DIRECTORY ${ae2f_Preproc_BINROOT}/util/Macro/${__name}
+		COMMAND ${CMAKE_COMMAND} "--build" "."
+		RESULT_VARIABLE BuildOut
+		)
+
+	if(NOT BuildOut EQUAL 0)
+		message(FATAL_ERROR "[ae2f::Macro::init] Build failed. ${BuildOut}")
+	endif()
+
+	unset(ae2f_macro_last_exe)
+	file(GLOB_RECURSE ae2f_macro_last_exe ${ae2f_Preproc_BINROOT}/util/Macro/${__name}/bin/**)
+
+	message(STATUS "[ae2f::Macro::init] configuration succeed ${ae2f_macro_last_exe}")
 
 	if(${prm_SZPARAM} GREATER ${ae2f_Macro${__name}SZPRM})
 		set(ae2f_Macro${__name}SZPRM ${prm_SZPARAM})
@@ -62,6 +62,10 @@ macro(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
 		set(ae2f_Macro${__name}SZTPRM ${prm_SZTPARAM})
 	endif()
 	message(STATUS "[ae2f_Macro_init] Succeed. ${ae2f_macro_last_exe}")
+endmacro()
+
+macro(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
+	ae2f_Macro_init2(${prm_CMT_REQUIRED} ${prm_SZPARAM} ${prm_SZTPARAM} 0)
 endmacro()
 
 macro(ae2f_Macro_one prm_in_path_cmake prm_out_path_cmake)

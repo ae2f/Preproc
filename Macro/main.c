@@ -7,6 +7,7 @@
 #define	CMT_REQUIRED		1
 #define	SZPARAM			10
 #define	SZTPARAM		10
+#define	NO_ROOT_BRACKET		0
 #endif
 
 #include <stdio.h>
@@ -269,7 +270,39 @@ PRM_CASE_BLANK:
 
 					case '(':
 						if(isTrue(field, FIELD_IS_FN_ARG)) {
-							while((fgetc(stdin)) != ')');
+#if	CMT_REQUIRED
+							fputc('(', stdout);
+#endif
+							while((ch = fgetc(stdin)) != ')')
+#if	CMT_REQUIRED
+								fputc(ch, stdout)
+#endif
+									;
+
+#if	CMT_REQUIRED
+							fputc(')', stdout);
+#endif
+						} else {
+							stack++;
+							setTrue(field, FIELD_IS_FN_ARG);
+						}
+
+						break;
+
+					case '[':
+						if(isTrue(field, FIELD_IS_FN_ARG)) {
+#if	CMT_REQUIRED
+							fputc('[', stdout);
+#endif
+							while((ch = fgetc(stdin)) != ']')
+#if	CMT_REQUIRED
+								fputc(ch, stdout)
+#endif
+									;
+
+#if	CMT_REQUIRED
+							fputc(']', stdout);
+#endif
 						} else {
 							stack++;
 							setTrue(field, FIELD_IS_FN_ARG);
@@ -280,6 +313,11 @@ PRM_CASE_BLANK:
 					case ',':
 						setFalse(field, FIELD_IS_FN_ARG);
 						goto LBL_BYPASS_SCOPE;
+
+					case ']':
+						if(stack--) break;
+						goto LBL_BYPASS_SCOPE;
+
 					case ')':
 LBL_BYPASS_SCOPE:
 						if(ch == ')' && stack--) {
@@ -355,19 +393,31 @@ LBL_UP_STACK:
 						if (!(++stack)) {
 							return STATE_OVERRUN;
 						}
-						l = fputc('{', stdout);
-						if (l < 0)
-							return STATE_OUTFAILED;
+#if	NO_ROOT_BRACKET
+						if(stack != 1)
+#endif
+						{
+							l = fputc('{', stdout);
+							if (l < 0)
+								return STATE_OUTFAILED;
+						}
+
 						break;
 
 					case '}':
-						l = fputc('}', stdout);
-						if (l < 0)
-							return STATE_OUTFAILED;
+#if	NO_ROOT_BRACKET
+						if(stack != 1)
+#endif
+						{
+							l = fputc('}', stdout);
+							if (l < 0)
+								return STATE_OUTFAILED;
+						}
 
 						if (!(--stack)) {
 							goto STACKED;
 						}
+
 						break;
 				}
 			}
@@ -379,7 +429,7 @@ STACKED:;
 	}
 
 	puts("\n#undef\t__ae2f_MACRO_GENERATED\n"
-		"\n#define\t__ae2f_MACRO_GENERATED\t0\n");
+			"\n#define\t__ae2f_MACRO_GENERATED\t0\n");
 
 	return 0;
 
