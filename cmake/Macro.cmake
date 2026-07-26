@@ -74,7 +74,6 @@ macro(ae2f_Macro_one prm_in_path_cmake prm_out_path_cmake)
 
 	message(STATUS "[ae2f::Macro::one] ${prm_in} ${prm_out}")
 
-
 	get_filename_component(out_dir "${prm_out}" DIRECTORY)
 	file(MAKE_DIRECTORY ${out_dir})
 
