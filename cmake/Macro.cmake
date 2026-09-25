@@ -79,7 +79,7 @@ macro(ae2f_Macro_one prm_in_path_cmake prm_out_path_cmake)
 
 	add_custom_command(
 		OUTPUT		${prm_out}
-		MAIN_DEPENDENCY	${prm_in}
+		DEPENDS		${prm_in} ${ae3f_easyredir_exe}
 
 		COMMAND 
 		"${ae3f_easyredir_exe}"
@@ -87,16 +87,12 @@ macro(ae2f_Macro_one prm_in_path_cmake prm_out_path_cmake)
 		"${prm_out}" 
 		"${prm_out}.err" 0
 		"${ae2f_macro_last_exe}"
-
-		COMMENT "ae2f::Macro ${prm_in} ${prm_out}"
-		VERBATIM
 		)
 
 	add_custom_command(
 		OUTPUT		${prm_out}.err
-		MAIN_DEPENDENCY	${prm_out}
-		VERBATIM
-		COMMAND	"${ae3f_easyredir_exe}"
+		DEPENDS		${prm_out} ${ae3f_easyredir_exe}
+		COMMAND		"${ae3f_easyredir_exe}"
 		"${prm_in}" "${prm_out}.err" "${prm_out}.err" 0
 		"${CMAKE_COMMAND}" --version
 		)
