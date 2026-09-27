@@ -39,8 +39,8 @@ include(cmake/preproctent.cmake)
 set(ae2f_Macro_ROOT "${PROJECT_SOURCE_DIR}/Macro" CACHE STRING "${PROJECT_SOURCE_DIR}/Macro")
 set(ae2f_Inc_ROOT "${PROJECT_SOURCE_DIR}/Inc" CACHE STRING "${PROJECT_SOURCE_DIR}/Inc")
 set(ae2f_FileRaw_ROOT "${PROJECT_SOURCE_DIR}/FileRaw" CACHE STRING "${PROJECT_SOURCE_DIR}/FileRaw")
-set(ae2f_Preproc_ROOT ${PROJECT_SOURCE_DIR} CACHE STRING "")
-set(ae2f_Preproc_BINROOT ${PROJECT_BINARY_DIR} CACHE STRING "")
+set(ae2f_Preproc_ROOT ${PROJECT_SOURCE_DIR}/ CACHE STRING "")
+set(ae2f_Preproc_BINROO ${PROJECT_BINARY_DIR}/ CACHE STRING "")
 
 # Execute git to fetch CoreScript when repository does not exist
 if(NOT EXISTS ${ae2f_CoreScript_Wh})
@@ -66,7 +66,6 @@ ae2fpreproctent_rel(
 	easyredir
 	${ae3f_easyredir_Wh}
 	ae3f/easyredir
-	easyredir
 	)
 
 set(ae3f_easyredir_exe ${easyredir_exe} CACHE STRING "executable of easyredir")

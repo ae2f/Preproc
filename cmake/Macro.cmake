@@ -79,7 +79,7 @@ macro(ae2f_Macro_one prm_in_path_cmake prm_out_path_cmake)
 
 	add_custom_command(
 		OUTPUT		${prm_out}
-		DEPENDS		${prm_in} ${ae3f_easyredir_exe}
+		DEPENDS		${prm_in} ${easyredir_exe} easyredir_proj
 
 		COMMAND 
 		"${ae3f_easyredir_exe}"
@@ -91,7 +91,7 @@ macro(ae2f_Macro_one prm_in_path_cmake prm_out_path_cmake)
 
 	add_custom_command(
 		OUTPUT		${prm_out}.err
-		DEPENDS		${prm_out} ${ae3f_easyredir_exe}
+		DEPENDS		${prm_out} easyredir_proj ${easyredir_exe}
 		COMMAND		"${ae3f_easyredir_exe}"
 		"${prm_in}" "${prm_out}.err" "${prm_out}.err" 0
 		"${CMAKE_COMMAND}" --version

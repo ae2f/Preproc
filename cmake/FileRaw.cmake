@@ -44,7 +44,7 @@ function(ae2f_FileRaw_Run_One inp_file_absolute_cmake out_file_absolute_cmake)
 	message(STATUS "cfg::ae2f::FileRaw ${inp_file_absolute} ${out_file_absolute}")
 	add_custom_command(
 		OUTPUT		${out_file_absolute}
-		DEPENDS		${inp_file_absolute} ${ae3f_easyredir_exe}
+		DEPENDS		${inp_file_absolute} ${easyredir_exe} easyredir_proj
 
 		COMMAND 
 		"${ae3f_easyredir_exe}"
@@ -57,7 +57,7 @@ function(ae2f_FileRaw_Run_One inp_file_absolute_cmake out_file_absolute_cmake)
 
 	add_custom_command(
 		OUTPUT			${out_file_absolute}.err
-		DEPENDS		${out_file_absolute} ${ae3f_easyredir_exe}
+		DEPENDS		${out_file_absolute} ${easyredir_exe} easyredir_proj
 
 		COMMAND 
 		"${ae3f_easyredir_exe}"
@@ -78,7 +78,7 @@ function(ae2f_FileRaw_Run_One2 inp_file_absolute out_file_absolute keygen)
 	message(STATUS "cfg::ae2f::FileRaw2 ${inp_file_absolute} ${out_file_absolute}")
 	add_custom_command(
 		OUTPUT		${out_file_absolute}
-		DEPENDS		${inp_file_absolute} ${ae3f_easyredir_exe}
+		DEPENDS		${inp_file_absolute} ${easyredir_exe} easyredir_proj
 
 		COMMAND 
 		"${ae3f_easyredir_exe}"
@@ -93,7 +93,7 @@ function(ae2f_FileRaw_Run_One2 inp_file_absolute out_file_absolute keygen)
 
 	add_custom_command(
 		OUTPUT			${out_file_absolute}.err
-		DEPENDS			${out_file_absolute} ${ae3f_easyredir_exe}
+		DEPENDS			${out_file_absolute} 
 
 		COMMAND 
 		"${ae3f_easyredir_exe}"

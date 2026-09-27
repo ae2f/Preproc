@@ -53,7 +53,7 @@ function(ae2f_Inc_Run_One inp_file_absolute_cmake out_file_absolute_cmake)
 
 	add_custom_command(
 		OUTPUT			${out_file_absolute}
-		DEPENDS			${inp_file_absolute} ${ae3f_easyredir_exe}
+		DEPENDS			${inp_file_absolute} ${easyredir_exe} easyredir_proj
 		WORKING_DIRECTORY	${dir}
 
 		COMMAND 
@@ -66,7 +66,7 @@ function(ae2f_Inc_Run_One inp_file_absolute_cmake out_file_absolute_cmake)
 
 	add_custom_command(
 		OUTPUT			${out_file_absolute}.err
-		DEPENDS			${out_file_absolute} ${ae3f_easyredir_exe}
+		DEPENDS			${out_file_absolute} ${easyredir_exe} easyredir_proj
 
 		COMMAND ${ae3f_easyredir_exe} ${inp_file_absolute} ${out_file_absolute}.err
 		${out_file_absolute}.err 0
