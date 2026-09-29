@@ -4,6 +4,9 @@ project(Preproc VERSION 1.1.4 LANGUAGES C)
 
 option(ae2f_TEST "" ON)
 
+add_library(ae2f-Preproc INTERFACE)
+add_library(ae2f::Preproc ALIAS ae2f-Preproc)
+
 set(ae2f_CoreScript_Wh ${ae2f_ProjRoot}/${ae2f_submod}/ae2f/CoreScript)
 set(ae3f_easyredir_Wh ${ae2f_ProjRoot}/${ae2f_submod}/ae3f/easyredir)
 
@@ -58,8 +61,9 @@ if(NOT EXISTS ${ae3f_easyredir_Wh})
 		)
 endif()
 
-add_subdirectory(${ae2f_CoreScript_Wh} ${ae2f_ProjRoot}/${ae2f_submod}/ae2f/CoreScript)
-add_subdirectory(${ae3f_easyredir_Wh} ${ae2f_ProjRoot}/${ae2f_submod}/ae3f/easyredir)
+if(NOT TARGET ae2f::CoreScript)
+	add_subdirectory(${ae2f_CoreScript_Wh} ${ae2f_BinRoot}/${ae2f_submod}/ae2f/CoreScript)
+endif()
 
 message(STATUS "sub-configuring ${ae3f_easyredir_Wh}")
 ae2fpreproctent_rel(
