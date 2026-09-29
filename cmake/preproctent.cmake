@@ -1,10 +1,11 @@
 
 # configure a cmake binary project from ${srcdir} to ${tardir}
-# ${name}_exe
-# ${name}_proj_cfg
-# ${name}_proj
-# ${name}_dep
-function(ae2fpreproctent name srcdir tardir)
+# ${prefix}_exe
+# ${prefix}_proj_cfg
+# ${prefix}_proj
+# ${prefix}_dep
+function(ae2fpreproctent2 prefix name srcdir tardir)
+
 	if(NOT ae2f_PreProc_CMAKE_C_CC_COMPILER STREQUAL "")
 		set(prm_cc_compiler "-DCMAKE_CXX_COMPILER=${ae2f_PreProc_CMAKE_CXX_COMPILER}")
 	else()
@@ -36,10 +37,14 @@ function(ae2fpreproctent name srcdir tardir)
 		set(gen "")
 	endif()
 
-	set(exe ${tardir}/bin/Release/${name}${CMAKE_EXECUTABLE_SUFFIX})
-	set(${name}_exe ${exe} PARENT_SCOPE)
-	set(${name}_dep ${exe} ${name}_proj PARENT_SCOPE)
-	message(STATUS "preproctent: ${exe} ${${name}_exe}")
+	set(exe "${tardir}/bin/Release/${name}${CMAKE_EXECUTABLE_SUFFIX}")
+	set(${prefix}_exe ${exe} PARENT_SCOPE)
+	set(${prefix}_dep ${prefix}_proj ${exe} PARENT_SCOPE)
+	message(STATUS "preproctent: ${exe} ${${prefix}_exe}")
+
+	if(TARGET ${prefix}_proj)
+		return()
+	endif()
 
 	add_custom_command(
 		DEPENDS		${srcdir}/CMakeLists.txt
@@ -60,20 +65,29 @@ function(ae2fpreproctent name srcdir tardir)
 		-Dae2f_ProjRoot=${ae2f_PreProc_ProjRoot}
 		-Dae2f_submod=${ae2f_PreProc_submod}
 		-Dae2f_host=${ae2f_PreProc_host}
-		-DCMAKE_TOOLCHAIN_FILE=${ae2f_Preproc_ROOT}/cmake/unify.cmake
+		"-DCMAKE_TOOLCHAIN_FILE=${ae2f_Preproc_ROOT}/cmake/unify.cmake"
+		${ARGN}
 		)
 
-	add_custom_target(${name}_proj_cfg DEPENDS ${tardir}/CMakeCache.txt)
+	add_custom_target(${prefix}_proj_cfg DEPENDS ${tardir}/CMakeCache.txt)
 
 	add_custom_command(
 		OUTPUT			${exe}
 		WORKING_DIRECTORY	${tardir}
 		COMMAND			${CMAKE_COMMAND} --build . --config Release
-		DEPENDS			${tardir}/CMakeCache.txt ${name}_proj_cfg
+		DEPENDS			${tardir}/CMakeCache.txt ${prefix}_proj_cfg
 		)
-	add_custom_target(${name}_proj DEPENDS ${exe} ${name}_proj_cfg)
+	add_custom_target(${prefix}_proj DEPENDS ${exe} ${prefix}_proj_cfg)
 endfunction()
 
+macro(ae2fpreproctent name srcdir tardir)
+	ae2fpreproctent2(${name} ${name} ${srcdir} ${tardir} ${ARGN})
+endmacro()
+
 macro(ae2fpreproctent_rel name srcdir tardir_rel)
-	ae2fpreproctent(${name} "${srcdir}" "${ae2f_Preproc_BINROOT}/util/${tardir_rel}")
+	ae2fpreproctent(${name} "${srcdir}" "${ae2f_Preproc_BINROOT}/util/${tardir_rel}" ${ARGN})
+endmacro()
+
+macro(ae2fpreproctent_rel2 prefix name srcdir tardir_rel)
+	ae2fpreproctent2(${prefix} ${name} "${srcdir}" "${ae2f_Preproc_BINROOT}/util/${tardir_rel}" ${ARGN})
 endmacro()

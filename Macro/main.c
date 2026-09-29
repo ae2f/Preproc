@@ -44,6 +44,7 @@ char ENDL[] = " \\\n";
 #define STATE_OUTFAILED 1
 #define STATE_UNEXPECTED 2
 #define STATE_OVERRUN 3
+#define STATE_UNDEFINED_RETURN	4
 
 #define casenewlines	\
         case '\n':	\
@@ -451,5 +452,5 @@ STRING:
 		}
 	}
 
-	return -1;
+	return STATE_UNDEFINED_RETURN;
 }

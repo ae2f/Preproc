@@ -1,11 +1,10 @@
 set(ae2f_MAC_KEYWORD "ae2f_MAC")
 option(ae2f_MAC_BUILD "Convention variable. If on, macro function will be built." OFF)
 
-macro(ae2f_Macro_init2 prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM prm_NO_ROOT_BRACKET)
+function(ae2f_Macro_init2 prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM prm_NO_ROOT_BRACKET)
 	message(STATUS "ae2f::Macro::init")
 
-	set(__name a-${ae2f_MAC_KEYWORD}-${prm_SZPARAM}-${prm_SZTPARAM}-${prm_CMT_REQUIRED}-${prm_NO_ROOT_BRACKET})
-
+	set(__name ae2f_mtpml-${ae2f_MAC_KEYWORD}-${prm_SZPARAM}-${prm_SZTPARAM}-${prm_CMT_REQUIRED}-${prm_NO_ROOT_BRACKET})
 
 	if(NOT DEFINED ae2f_Macro${__name}SZPRM)
 		set(ae2f_Macro${__name}SZPRM 0)
@@ -15,54 +14,32 @@ macro(ae2f_Macro_init2 prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM prm_NO_ROOT_BRA
 		set(ae2f_Macro${__name}SZTPRM 0)
 	endif()
 
-	file(REMOVE_RECURSE ${ae2f_Preproc_BINROOT}/util/Macro/${__name})
-	file(MAKE_DIRECTORY ${ae2f_Preproc_BINROOT}/util/Macro/${__name})
-	execute_process(
-		WORKING_DIRECTORY ${ae2f_Macro_ROOT}
-		COMMAND ${CMAKE_COMMAND}
-		"-S" "." "-B" "${ae2f_Preproc_BINROOT}/util/Macro/${__name}"
-		-Dae2f_Macro_CMT_REQUIRED=${prm_CMT_REQUIRED}
-		-Dae2f_Macro_SZPARAM=${prm_SZPARAM}
-		-Dae2f_Macro_SZTPARAM=${prm_SZTPARAM}
-		-Dae2f_MAC_KEYWORD=${ae2f_MAC_KEYWORD}
-		-DNO_ROOT_BRACKET=${prm_NO_ROOT_BRACKET}
-		${ae2f_PreProc_CSTD_PRM}
-		${ae2f_PreProc_C_PRM}
-		"-DCMAKE_BUILD_TYPE=Release"
-		${gen}
-		${ARGN}
-		-Dae2f_submod=${ae2f_submod}
-		-Dae2f_ProjRoot=${ae2f_ProjRoot}
-		RESULT_VARIABLE ConfOut
-		)
-
-	if(NOT ConfOut EQUAL 0)
-		message(FATAL_ERROR "[ae2f::Macro::init] Configuration failed. ${ConfOut}")
-	endif()
-
-	execute_process(
-		WORKING_DIRECTORY ${ae2f_Preproc_BINROOT}/util/Macro/${__name}
-		COMMAND ${CMAKE_COMMAND} "--build" "."
-		RESULT_VARIABLE BuildOut
-		)
-
-	if(NOT BuildOut EQUAL 0)
-		message(FATAL_ERROR "[ae2f::Macro::init] Build failed. ${BuildOut}")
-	endif()
-
-	unset(ae2f_macro_last_exe)
-	file(GLOB_RECURSE ae2f_macro_last_exe ${ae2f_Preproc_BINROOT}/util/Macro/${__name}/bin/**)
-
-	message(STATUS "[ae2f::Macro::init] configuration succeed ${ae2f_macro_last_exe}")
-
 	if(${prm_SZPARAM} GREATER ${ae2f_Macro${__name}SZPRM})
 		set(ae2f_Macro${__name}SZPRM ${prm_SZPARAM})
 	endif()
 	if(${prm_SZTPARAM} GREATER ${ae2f_Macro${__name}SZTPRM})
 		set(ae2f_Macro${__name}SZTPRM ${prm_SZTPARAM})
 	endif()
+
+	ae2fpreproctent_rel2(
+		${__name} Macro 
+		"${ae2f_Macro_ROOT}"
+		"ae2f/mtmpl/${__name}"
+
+		-Dae2f_Macro_CMT_REQUIRED=${prm_CMT_REQUIRED}
+		-Dae2f_Macro_SZPARAM=${prm_SZPARAM}
+		-Dae2f_Macro_SZTPARAM=${prm_SZTPARAM}
+		-Dae2f_MAC_KEYWORD=${ae2f_MAC_KEYWORD}
+		-DNO_ROOT_BRACKET=${prm_NO_ROOT_BRACKET}
+
+		${ARGN}
+		)
+
+	set(ae2f_macro_last_exe		"${${__name}_exe}" PARENT_SCOPE)
+	set(ae2f_macro_last_proj	"${__name}_proj" PARENT_SCOPE)
+
 	message(STATUS "[ae2f_Macro_init] Succeed. ${ae2f_macro_last_exe}")
-endmacro()
+endfunction()
 
 macro(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
 	ae2f_Macro_init2(${prm_CMT_REQUIRED} ${prm_SZPARAM} ${prm_SZTPARAM} 0)
@@ -79,19 +56,26 @@ macro(ae2f_Macro_one prm_in_path_cmake prm_out_path_cmake)
 
 	add_custom_command(
 		OUTPUT		${prm_out}
-		DEPENDS		${prm_in} ${easyredir_exe} easyredir_proj
+		DEPENDS	
+		${prm_in} ${easyredir_exe} easyredir_proj
+		${ae2f_macro_last_proj} ${ae2f_macro_last_exe}
 
 		COMMAND 
 		"${ae3f_easyredir_exe}"
 		"${prm_in}" 
 		"${prm_out}" 
-		"${prm_out}.err" 0
+		"${prm_out}.err"
+		0
 		"${ae2f_macro_last_exe}"
+		VERBATIM
 		)
 
 	add_custom_command(
 		OUTPUT		${prm_out}.err
-		DEPENDS		${prm_out} easyredir_proj ${easyredir_exe}
+		DEPENDS	
+		${prm_out} easyredir_proj ${easyredir_exe}
+		${ae2f_macro_last_proj} ${ae2f_macro_last_exe}
+
 		COMMAND		"${ae3f_easyredir_exe}"
 		"${prm_in}" "${prm_out}.err" "${prm_out}.err" 0
 		"${CMAKE_COMMAND}" --version
@@ -176,21 +160,6 @@ macro(ae2f_Macro_Lib_V2_REL
 		$<BUILD_INTERFACE:${OUTDIRROOT}/${prm_include_dir}/>  
 		$<INSTALL_INTERFACE:${OUTDIRROOT_}/${prm_include_dir}/>
 		)
-
-	if(NOT ${prm_guard})
-		file(GLOB_RECURSE files-inc "${prm_inc_dir}/${prm_inc_glob}")
-
-		add_executable(
-			dvl-${prm_namespace}-${prm_name}
-			${ae2f_Preproc_ROOT}/cmake/dummymain.c
-			${files-inc}
-			)
-
-		target_link_libraries(
-			dvl-${prm_namespace}-${prm_name}
-			PUBLIC ${prm_namespace}::${prm_name}
-			)
-	endif()
 endmacro()
 
 macro(ae2f_Macro_Lib_V2 
@@ -216,7 +185,6 @@ macro(ae2f_Macro_Lib_V2
 
 	if(NOT ${prm_guard})
 		file(GLOB_RECURSE files-inc "${prm_inc_dir}/${prm_inc_glob}")
-		# message(FATAL_ERROR ${files-inc})
 
 		add_executable(
 			dvl-${prm_namespace}-${prm_name}
