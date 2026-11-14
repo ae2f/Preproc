@@ -84,8 +84,8 @@ int main(void) {
 
 	unsigned field = 0;
 
-	puts("#undef\t__ae2f_MACRO_GENERATED\n"
-			"#define\t__ae2f_MACRO_GENERATED\t1");
+	puts("#undef\t_ae2f_MACRO_GENERATED\n"
+			"#define\t_ae2f_MACRO_GENERATED\t1");
 	while ((ch = fgetc(stdin)) != EOF) {
 
 		goto __START;
@@ -124,8 +124,8 @@ __START:
 					fputc(ch, stdout);
 				}
 
-				l = puts("\n#undef __ae2f_MACRO_GENERATED\n"
-					"#define __ae2f_MACRO_GENERATED 1");
+				l = puts("\n#undef _ae2f_MACRO_GENERATED\n"
+					"#define _ae2f_MACRO_GENERATED 1");
 				if (l < 0)	return STATE_OUTFAILED;
 				
 			}
@@ -429,8 +429,8 @@ STACKED:;
 		}
 	}
 
-	puts("\n#undef\t__ae2f_MACRO_GENERATED\n"
-			"\n#define\t__ae2f_MACRO_GENERATED\t0\n");
+	puts("\n#undef\t_ae2f_MACRO_GENERATED\n"
+			"\n#define\t_ae2f_MACRO_GENERATED\t0\n");
 
 	return 0;
 
