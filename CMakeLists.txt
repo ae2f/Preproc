@@ -4,8 +4,10 @@ project(Preproc VERSION 1.1.4 LANGUAGES C)
 
 option(ae2f_TEST "" ON)
 
-add_library(ae2f-Preproc INTERFACE)
-add_library(ae2f::Preproc ALIAS ae2f-Preproc)
+if(TARGET ae2f::Preproc)
+	return()
+endif()
+
 
 set(ae2f_CoreScript_Wh ${ae2f_ProjRoot}/${ae2f_submod}/ae2f/CoreScript)
 set(ae3f_easyredir_Wh ${ae2f_ProjRoot}/${ae2f_submod}/ae3f/easyredir)
@@ -75,11 +77,9 @@ ae2fpreproctent_rel(
 set(ae3f_easyredir_exe ${easyredir_exe} CACHE STRING "executable of easyredir")
 message(STATUS "ae2f::preproc::cfg easyredir exe ready: ${ae3f_easyredir_exe}")
 
-if(NOT TARGET ae2f::Preproc)
-	ae2f_CoreLibTentConfigCustom(
-		Preproc INTERFACE inc ae2f config/Macro.cmake.in
-		)
-endif()
+ae2f_CoreLibTentConfigCustom(
+	Preproc INTERFACE inc ae2f config/Macro.cmake.in
+	)
 
 include(cmake/Macro.cmake)
 include(cmake/Inc.cmake)
@@ -91,3 +91,4 @@ if(${ae2f_TEST})
 	ae2f_FileRaw_init(ON 30)
 	ae2f_FileRaw_init(OFF 30)
 endif()
+
