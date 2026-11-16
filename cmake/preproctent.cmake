@@ -40,7 +40,6 @@ function(ae2fpreproctent2 prefix name srcdir tardir)
 	set(exe "${tardir}/bin/Release/${name}${CMAKE_EXECUTABLE_SUFFIX}")
 	set(${prefix}_exe ${exe} PARENT_SCOPE)
 	set(${prefix}_dep ${prefix}_proj ${exe} PARENT_SCOPE)
-	message(STATUS "preproctent: ${exe} ${${prefix}_exe}")
 
 	if(TARGET ${prefix}_proj)
 		return()

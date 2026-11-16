@@ -2,8 +2,6 @@ set(ae2f_MAC_KEYWORD "ae2f_MAC")
 option(ae2f_MAC_BUILD "Convention variable. If on, macro function will be built." OFF)
 
 function(ae2f_Macro_init2 prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM prm_NO_ROOT_BRACKET)
-	message(STATUS "ae2f::Macro::init")
-
 	set(__name ae2f_mtpml-${ae2f_MAC_KEYWORD}-${prm_SZPARAM}-${prm_SZTPARAM}-${prm_CMT_REQUIRED}-${prm_NO_ROOT_BRACKET})
 
 	if(NOT DEFINED ae2f_Macro${__name}SZPRM)
@@ -37,8 +35,6 @@ function(ae2f_Macro_init2 prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM prm_NO_ROOT_
 
 	set(ae2f_macro_last_exe		"${${__name}_exe}" PARENT_SCOPE)
 	set(ae2f_macro_last_proj	"${__name}_proj" PARENT_SCOPE)
-
-	message(STATUS "[ae2f_Macro_init] Succeed. ${ae2f_macro_last_exe}")
 endfunction()
 
 macro(ae2f_Macro_init prm_CMT_REQUIRED prm_SZPARAM prm_SZTPARAM)
@@ -48,8 +44,6 @@ endmacro()
 macro(ae2f_Macro_one prm_in_path_cmake prm_out_path_cmake)
 	file(TO_NATIVE_PATH	${prm_in_path_cmake} prm_in)
 	file(TO_NATIVE_PATH	${prm_out_path_cmake} prm_out)
-
-	message(STATUS "[ae2f::Macro::one] ${prm_in} ${prm_out}")
 
 	get_filename_component(out_dir "${prm_out}" DIRECTORY)
 	file(MAKE_DIRECTORY ${out_dir})

@@ -1,6 +1,4 @@
 macro(ae2f_FileRaw_init prm_STRGEN prm_BINGEN_BUFFSZ)
-	message(STATUS "ae2f::FileRaw::init")
-
 	execute_process(
 		WORKING_DIRECTORY ${ae2f_FileRaw_ROOT}
 		COMMAND 
@@ -33,7 +31,6 @@ macro(ae2f_FileRaw_init prm_STRGEN prm_BINGEN_BUFFSZ)
 	endif()
 
 	file(GLOB_RECURSE ae2f_fileraw_last_exe ${ae2f_Preproc_BINROOT}/util/FileRaw/A${prm_STRGEN}/bin/**)
-	message(STATUS "[ae2f::FileRaw::init] ${ae2f_fileraw_last_exe}")
 endmacro()
 
 
@@ -41,7 +38,6 @@ function(ae2f_FileRaw_Run_One inp_file_absolute_cmake out_file_absolute_cmake)
 	file(TO_NATIVE_PATH ${inp_file_absolute} inp_file_absolute_cmake)
 	file(TO_NATIVE_PATH ${out_file_absolute} out_file_absolute_cmake)
 
-	message(STATUS "cfg::ae2f::FileRaw ${inp_file_absolute} ${out_file_absolute}")
 	add_custom_command(
 		OUTPUT		${out_file_absolute}
 		DEPENDS		${inp_file_absolute} ${easyredir_exe} easyredir_proj
@@ -75,7 +71,6 @@ function(ae2f_FileRaw_Run_One2 inp_file_absolute out_file_absolute keygen)
 	file(TO_NATIVE_PATH ${inp_file_absolute} inp_file_absolute_cmake)
 	file(TO_NATIVE_PATH ${out_file_absolute} out_file_absolute_cmake)
 
-	message(STATUS "cfg::ae2f::FileRaw2 ${inp_file_absolute} ${out_file_absolute}")
 	add_custom_command(
 		OUTPUT		${out_file_absolute}
 		DEPENDS		${inp_file_absolute} ${easyredir_exe} easyredir_proj

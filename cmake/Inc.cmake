@@ -1,8 +1,6 @@
 # -DINC_LEAVE_NFOUND
 #	When this flag is set ON, on ignoring nfound of path, it will write the include again.
 macro(ae2f_Inc_init prm_DIRLEN prm_PATHLEN prm_STACKLEN prm_INC_IGNORE_STACKSMASH prm_INC_IGNORE_NFOUND prm_INC_REPT_CHECK)
-	message(STATUS "[ae2f::Inc::init]")
-
 	set(__name ${prm_DIRLEN}${prm_PATHLEN}${prm_STACKLEN}${prm_INC_IGNORE_NFOUND}${prm_INC_IGNORE_STACKSMASH}${prm_INC_REPT_CHECK})
 
 	execute_process(
@@ -39,10 +37,6 @@ macro(ae2f_Inc_init prm_DIRLEN prm_PATHLEN prm_STACKLEN prm_INC_IGNORE_STACKSMAS
 	if(NOT BuildOut EQUAL 0)
 		message(FATAL_ERROR "[ae2f_Inc_init] Build failed. ${BuildOut}")
 	endif()
-
-
-
-	message("[ae2f_Inc_init] Succeed.")
 endmacro()
 
 function(ae2f_Inc_Run_One inp_file_absolute_cmake out_file_absolute_cmake)

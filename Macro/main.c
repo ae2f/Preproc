@@ -148,7 +148,10 @@ __START:
 				continue;
 			}
 
-			l = fputs("#define _", stdout);
+			l = fputs(""
+					"/* cppcheck-suppress misra-c2012-20.7 */\n"
+					"#define _"
+					, stdout);
 			if (l < 0)	return STATE_OUTFAILED;
 
 			tprms_len = 0;
